@@ -1,0 +1,20 @@
+{
+  "ignores": [],
+  "groups": [
+    [
+      "/Users/emirhancoban/ColorBlock_PlayworksPlayable/LunaTemp/stage3/processed-scripts/Assets/_Project/Scripts/PlayableSmokeController.cs"
+    ],
+    [
+      "/Users/emirhancoban/ColorBlock_PlayworksPlayable/LunaTemp/stage3/processed-scripts/Assets/TutorialInfo/Scripts/Readme.cs"
+    ],
+    [
+      "/Users/emirhancoban/Downloads/7.2.0/pipeline/templates/LunaCompiler/Scripts/Properties/AssemblyInfo.cs"
+    ],
+    [
+      "/Users/emirhancoban/Downloads/7.2.0/pipeline/templates/LunaCompiler/Scripts/Sources/OtherDummyScript.cs"
+    ],
+    [
+      "/Users/emirhancoban/Downloads/7.2.0/pipeline/templates/LunaCompiler/Scripts/obj/Debug/.NETFramework,Version=v4.7.AssemblyAttributes.cs"
+    ]
+  ]
+}
