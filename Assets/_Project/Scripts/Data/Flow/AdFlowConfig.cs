@@ -26,11 +26,17 @@ namespace Data.Flow
         // Add creative hooks when their runtime behavior is implemented.
         
         [Header("Texts")]
+#if PLAYWORKS_SDK
+        [LunaPlaygroundField("Tutorial Text", 1, "Texts")]
+#endif
         public string tutorialText = "Drag to escape!";
 #if PLAYWORKS_SDK
         [LunaPlaygroundField("CTA Text", 0, "Texts")]
 #endif
         public string ctaText = "PLAY NOW";
+#if PLAYWORKS_SDK
+        [LunaPlaygroundField("End Card Title", 2, "Texts")]
+#endif
         public string endCardTitle = "AWESOME!";
         public string endCardSubtitle = "Can you clear them all?";
     }
