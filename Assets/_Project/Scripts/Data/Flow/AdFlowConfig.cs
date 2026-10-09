@@ -23,9 +23,7 @@ namespace Data.Flow
 
         [Header("Hooks & Interactions")]
         public bool showTutorial = true;
-        public bool showHandPointer = true;
-        public bool showFailHookBeforeWin = false;
-        public bool autoPlayFirstMove = false;
+        // Add creative hooks when their runtime behavior is implemented.
         
         [Header("Texts")]
         public string tutorialText = "Drag to escape!";

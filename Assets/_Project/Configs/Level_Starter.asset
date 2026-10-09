@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c329dc789c1458ba211dbd81adc9757, type: 3}
+  m_Name: Level_Starter
+  m_EditorClassIdentifier: 
+  width: 5
+  height: 6
+  cells: []
+  blocks:
+  - id: red
+    colorId: 0
+    origin: {x: 0, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    movementMode: 1
+  - id: blue
+    colorId: 1
+    origin: {x: 3, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: yellow
+    colorId: 2
+    origin: {x: 2, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    movementMode: 2
+  - id: purple
+    colorId: 4
+    origin: {x: 0, y: 3}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: green
+    colorId: 3
+    origin: {x: 3, y: 3}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: pink
+    colorId: 7
+    origin: {x: 2, y: 3}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    movementMode: 2
+  - id: orange
+    colorId: 5
+    origin: {x: 2, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    movementMode: 1
+  exits:
+  - id: red-gate
+    colorId: 0
+    side: 2
+    startIndex: 0
+    length: 1
+  - id: blue-gate
+    colorId: 1
+    side: 3
+    startIndex: 0
+    length: 2
+  - id: yellow-gate
+    colorId: 2
+    side: 1
+    startIndex: 2
+    length: 1
+  - id: purple-gate
+    colorId: 4
+    side: 2
+    startIndex: 3
+    length: 2
+  - id: green-gate
+    colorId: 3
+    side: 3
+    startIndex: 3
+    length: 2
+  - id: pink-gate
+    colorId: 7
+    side: 0
+    startIndex: 2
+    length: 1
+  - id: orange-gate
+    colorId: 5
+    side: 2
+    startIndex: 2
+    length: 1

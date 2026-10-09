@@ -14,5 +14,8 @@ namespace Data.Variant
         public LevelConfig levelConfig;
         public VisualThemeConfig visualTheme;
         public AdFlowConfig adFlowConfig;
+        [Header("Animation")]
+        [Range(8f, 40f)] public float moveSpeed = 22f;
+        [Range(0.1f, 0.6f)] public float exitDuration = 0.24f;
     }
 }
