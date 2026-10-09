@@ -1,0 +1,140 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c329dc789c1458ba211dbd81adc9757, type: 3}
+  m_Name: Level_OneWay
+  m_EditorClassIdentifier:
+  width: 10
+  height: 10
+  cells:
+  - position: {x: 3, y: 3}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 4, y: 3}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 5, y: 3}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 6, y: 3}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 3, y: 4}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 6, y: 4}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 3, y: 5}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 6, y: 5}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 3, y: 6}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 4, y: 6}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 5, y: 6}
+    isActive: 1
+    isBlocker: 1
+  - position: {x: 6, y: 6}
+    isActive: 1
+    isBlocker: 1
+  blocks:
+  - id: red_outer
+    colorId: 0
+    origin: {x: 6, y: 1}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    movementMode: 6
+  - id: red_inner
+    colorId: 0
+    origin: {x: 2, y: 1}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    movementMode: 6
+  - id: blue_outer
+    colorId: 1
+    origin: {x: 8, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    movementMode: 4
+  - id: blue_inner
+    colorId: 1
+    origin: {x: 8, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    movementMode: 4
+  - id: yellow_outer
+    colorId: 2
+    origin: {x: 2, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    movementMode: 5
+  - id: yellow_inner
+    colorId: 2
+    origin: {x: 6, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    movementMode: 5
+  - id: green_outer
+    colorId: 3
+    origin: {x: 1, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    movementMode: 3
+  - id: green_inner
+    colorId: 3
+    origin: {x: 1, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 0, y: 1}
+    movementMode: 3
+  - id: locked
+    colorId: 4
+    origin: {x: 4, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 7
+  exits:
+  - id: exit_0
+    colorId: 0
+    side: 3
+    startIndex: 1
+    length: 1
+  - id: exit_1
+    colorId: 1
+    side: 1
+    startIndex: 8
+    length: 1
+  - id: exit_2
+    colorId: 2
+    side: 2
+    startIndex: 8
+    length: 1
+  - id: exit_3
+    colorId: 3
+    side: 0
+    startIndex: 1
+    length: 1

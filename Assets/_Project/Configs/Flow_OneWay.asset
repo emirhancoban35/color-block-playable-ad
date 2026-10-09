@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6528337b7ed74c34b92f8a39f804843, type: 3}
+  m_Name: Flow_OneWay
+  m_EditorClassIdentifier:
+  endCondition: 1
+  ctaMode: 1
+  showEndCardOnWin: 1
+  showProgress: 1
+  moveLimit: 10
+  targetBlocksToClear: 8
+  timer: 20
+  storeAfterInteraction: 0
+  endCardDelay: 0.45
+  ctaDelay: 2
+  tutorialDelay: 0.4
+  showTutorial: 1
+  hookText: Find the way out!
+  tutorialText: Follow the lanes!
+  ctaText: PLAY NOW
+  endCardTitle: YOU GOT IT!
+  endCardSubtitle: Ready for the next puzzle?

@@ -22,6 +22,7 @@ I built this as a portfolio project, with most of the scene setup done in the ed
 
 - [Setup](#setup)
 - [Designing levels](#designing-levels)
+- [Level examples](#level-examples)
 - [Architecture](#architecture)
 - [Visuals](#visuals)
 - [Ad flow](#ad-flow)
@@ -68,6 +69,9 @@ The included variants are:
 | `Variant_A` / `Variant_B` | Starter level with different ad flows |
 | `Variant_Showcase` | 8 × 10 grid, 20 blocks, 4 bottom exits |
 | `Variant_Stress` | 16 × 20 grid, 80 blocks, 8 bottom exits |
+| `Variant_Heart` | Heart silhouette, 12 blocks, exits on all four sides |
+| `Variant_Shapes` | L, T, zigzag, bar, and single-cell blocks around a central obstacle |
+| `Variant_OneWay` | Four one-way lanes, a locked block, and an eight-block clear target |
 
 The prepared scene uses `Variant_Stress`. One variant is prepared for each build; levels are not loaded in sequence at runtime.
 
@@ -118,7 +122,7 @@ That creates a 2 × 2 block. An L shape could use `[(0, 0), (1, 0), (0, 1)]`.
 
 Shapes must be connected and cannot contain duplicate cells. Blocks cannot overlap, leave the board, or occupy blocked or inactive cells.
 
-An empty `cells` list creates a fully active rectangular board. Add entries only for exceptions: `isBlocker` marks an obstacle, and `isActive = false` disables a cell.
+An empty `cells` list creates a fully active rectangular board. Add entries only for exceptions: `isBlocker` marks an obstacle, and `isActive = false` disables a cell. For shaped boards, the editor builds the floor and frame around the active cells. Exits still sit on the outer edges of the grid rectangle.
 
 Movement modes:
 
@@ -160,6 +164,42 @@ Rebuilds replace the generated board, camera, and HUD. Independent objects added
 Run **Prepare playable scene** again after changing a level, shape, theme, or active variant. Editing a config alone does not rebuild the saved geometry.
 
 Validation checks configuration errors. The 80-block level also has a solution test; arbitrary custom levels still need a playthrough.
+
+## Level examples
+
+These three levels use the same runtime as the 80-block stress scene. Each has its own level, theme, and flow config. Select its variant in **Tools → Color Block → Framework**, then click **Prepare playable scene** to try it.
+
+### Heart Board
+
+<p align="center">
+  <img src="docs/images/level-heart.png" width="300" alt="Heart-shaped board with a pink frame, twelve blocks, and exits on four sides">
+</p>
+
+[`Variant_Heart`](Assets/_Project/Configs/Variant_Heart.asset) uses inactive cells to cut a heart out of a 10 × 10 grid. The floor and pink frame follow that silhouette, including the notch between the two lobes. Twelve blocks share seven exits across all four sides; clearing the two central red blocks opens a route for the red blocks on either side.
+
+This is an example of changing the board silhouette without adding a new movement rule. The frame is baked into the board mesh when the scene is prepared. All twelve blocks must leave to finish the level.
+
+### Shape Lab
+
+<p align="center">
+  <img src="docs/images/level-shapes.png" width="300" alt="Eight differently shaped blocks with matching exits and four central obstacle cells">
+</p>
+
+[`Variant_Shapes`](Assets/_Project/Configs/Variant_Shapes.asset) combines L, T, and zigzag blocks with horizontal and vertical bars and a single-cell block. Four obstacle cells sit in the center. The eight exits have different widths, so each complete shape must fit its opening.
+
+Shapes come from `localCells`; they use the same occupancy checks, dragging, highlights, and exit animation as square blocks. Clear all eight to win. This layout is deliberately open so the different shapes and exits are easy to try.
+
+### One-Way Lanes
+
+<p align="center">
+  <img src="docs/images/level-oneway.png" width="300" alt="Four colored one-way lanes surrounding a locked purple block and a ring of obstacles">
+</p>
+
+[`Variant_OneWay`](Assets/_Project/Configs/Variant_OneWay.asset) gives each color one direction: red moves right, blue down, yellow left, and green up. The outer block in each pair clears before the inner block can follow. A ring of obstacles surrounds a permanently locked purple block.
+
+The flow uses `OnTargetBlocksCleared` with a target of eight. The level ends when the movable blocks are gone; the purple block stays on the board. This combines movement restrictions, obstacles, and a partial-clear goal through config data.
+
+The examples use completion goals to show those flow options. The stress creative keeps its existing ten-second active-interaction store flow. Preparing one example exports that variant and its referenced assets; the other examples and these documentation images are not bundled into it.
 
 ## Architecture
 
@@ -392,6 +432,7 @@ Batch helpers live outside `Assets`. Copy them into an isolated project's `Asset
 
 | Helper | Checks |
 | --- | --- |
+| [`LevelExamplesChecks`](Tests/LevelExamplesChecks.cs) | Solves all three example levels, checks one-way and locked movement, verifies win conditions, renders previews, and restores the stress scene |
 | [`StressSceneChecks`](Tests/StressSceneChecks.cs) | Solves all 80 blocks; checks mesh sharing, movement queues, repeated targets, and allocations |
 | [`BurstVisibilityChecks`](Tests/BurstVisibilityChecks.cs) | Checks prepared renderers, fragment size, lifetime, and cleanup |
 | [`ResponsiveLayoutChecks`](Tests/ResponsiveLayoutChecks.cs) | Checks five screen/orientation sizes, full-viewport safe-area fallback, larger reported insets, and title/CTA bounds |
