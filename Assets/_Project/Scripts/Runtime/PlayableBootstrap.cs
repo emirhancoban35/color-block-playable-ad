@@ -19,6 +19,8 @@ namespace Playable
         private AdSession session;
         [SerializeField] private Camera boardCamera;
         private int selected = -1, escaping = -1;
+        private float idleTime, hintTime;
+        private int hintBlock = -1, hintCursor;
         private Vector2 grabOffset;
         private Vector3 escapeStart, escapeTarget;
         private Vector3 burstOrigin;
@@ -71,6 +73,8 @@ namespace Playable
             session.Tick(dt);
             if (Input.GetMouseButtonDown(0))
             {
+                StopHint();
+                idleTime = 0f;
                 if (hud.HitCta(Input.mousePosition)) { platform.Install(); return; }
                 if (!session.Ended && escaping < 0 && !view.BurstPlaying)
                 {
@@ -120,9 +124,50 @@ namespace Playable
                     platform.GameEnded(session.Won, showCard);
                 }
             }
+            UpdateHint(dt);
             hud.TickVisuals(dt, selected < 0 && escaping < 0 && !view.BurstPlaying);
             hud.Tutorial(flow.showTutorial && !interacted && session.Elapsed >= flow.tutorialDelay && !session.Ended);
             hud.Cta(flow.ctaMode == CtaMode.PersistentButton || (flow.ctaMode == CtaMode.DelayedButton && session.Elapsed >= flow.ctaDelay) || presented);
+        }
+
+        private void StopHint()
+        {
+            if (hintBlock < 0) return;
+            view.ClearSelection();
+            hintBlock = -1;
+        }
+
+        private void UpdateHint(float dt)
+        {
+            if (!variant.adFlowConfig.showTutorial || session.Ended || selected >= 0 || escaping >= 0 || view.BurstPlaying || Input.GetMouseButton(0))
+            {
+                StopHint();
+                idleTime = 0f;
+                return;
+            }
+            if (hintBlock >= 0)
+            {
+                hintTime += dt;
+                view.PulseHint(hintTime);
+                if (hintTime >= 0.8f) { StopHint(); idleTime = 0f; }
+                return;
+            }
+            idleTime += dt;
+            if (idleTime < 2.5f) return;
+            idleTime = 0f;
+            for (int i = 0; i < board.BlockCount; i++)
+            {
+                int index = (hintCursor + i) % board.BlockCount;
+                if (board.PreviewStep(index, Vector2Int.left) == MoveResult.Blocked &&
+                    board.PreviewStep(index, Vector2Int.right) == MoveResult.Blocked &&
+                    board.PreviewStep(index, Vector2Int.up) == MoveResult.Blocked &&
+                    board.PreviewStep(index, Vector2Int.down) == MoveResult.Blocked) continue;
+                hintBlock = index;
+                hintCursor = (index + 1) % board.BlockCount;
+                hintTime = 0f;
+                view.ShowHint(index);
+                break;
+            }
         }
 
         private Vector3 PointerWorld()

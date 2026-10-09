@@ -13,6 +13,7 @@ namespace Playable.View
         [SerializeField] private ExitBurst exitBurst;
         private MaterialPropertyBlock outlineProperties;
         private int selectedBlock = -1;
+        private Vector3 outlineCenter;
         private Vector3[] targets;
         private int[] moving;
         private int movingCount;
@@ -50,11 +51,25 @@ namespace Playable.View
             blocks[index].localScale = Vector3.one * 1.025f;
             Mesh mesh = blocks[index].GetComponent<MeshFilter>().sharedMesh;
             selectionOutline.sharedMesh = mesh;
+            outlineCenter = mesh.bounds.center;
             selectionOutline.transform.SetParent(blocks[index], false);
             selectionOutline.transform.localScale = Vector3.one * 1.04f;
             selectionOutline.transform.localPosition = mesh.bounds.center * -0.04f + Vector3.forward * 0.12f;
             selectionOutline.GetComponent<MeshRenderer>().SetPropertyBlock(outlineProperties);
             selectionOutline.gameObject.SetActive(true);
+        }
+
+        public void ShowHint(int index)
+        {
+            SelectBlock(index);
+            blocks[index].localScale = Vector3.one;
+        }
+
+        public void PulseHint(float time)
+        {
+            float scale = 1.025f + Mathf.Sin(time * 8f) * 0.015f;
+            selectionOutline.transform.localScale = Vector3.one * scale;
+            selectionOutline.transform.localPosition = outlineCenter * (1f - scale) + Vector3.forward * 0.12f;
         }
 
         public void ClearSelection()

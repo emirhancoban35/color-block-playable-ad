@@ -48,6 +48,17 @@ internal static class GridBoardTests
             Equal(MoveResult.Moved, board.TryStep(0, Vector2Int.right));
             Equal(-1, board.BlockAt(new Vector2Int(1, 1))); Equal(0, board.BlockAt(new Vector2Int(2, 1))); Equal(0, board.BlockAt(new Vector2Int(3, 1)));
         });
+        Test("Hint previews never mutate board state", () => {
+            var board = Board(new[] { Block(0, 2), Block(1, 2) }, new[] { Gate(ExitSide.Left, 2) });
+            for (int i = 0; i < 100; i++) {
+                Equal(MoveResult.Cleared, board.PreviewStep(0, Vector2Int.left));
+                Equal(MoveResult.Blocked, board.PreviewStep(0, Vector2Int.right));
+                Equal(MoveResult.Moved, board.PreviewStep(0, Vector2Int.up));
+            }
+            Equal(new Vector2Int(0, 2), board.Origin(0)); Equal(0, board.ClearedCount);
+            Equal(0, board.BlockAt(new Vector2Int(0, 2))); Equal(1, board.BlockAt(new Vector2Int(1, 2)));
+            Equal(MoveResult.Cleared, board.TryStep(0, Vector2Int.left));
+        });
         Test("All four matching gates clear once", () => {
             var sides = new[] { ExitSide.Left, ExitSide.Right, ExitSide.Bottom, ExitSide.Top };
             var positions = new[] { new Vector2Int(0, 2), new Vector2Int(4, 2), new Vector2Int(2, 0), new Vector2Int(2, 4) };

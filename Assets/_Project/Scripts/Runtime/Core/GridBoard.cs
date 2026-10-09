@@ -102,7 +102,7 @@ namespace Playable.Core
         public ColorId Color(int block) { return blocks[block].color; }
         public bool IsCleared(int block) { return blocks[block].cleared; }
 
-        public MoveResult TryStep(int blockIndex, Vector2Int direction)
+        public MoveResult PreviewStep(int blockIndex, Vector2Int direction)
         {
             if (blockIndex < 0 || blockIndex >= blocks.Length || Math.Abs(direction.x) + Math.Abs(direction.y) != 1)
                 return MoveResult.Blocked;
@@ -118,16 +118,26 @@ namespace Playable.Core
                 if (occupant != -1 && occupant != blockIndex) return MoveResult.Blocked;
             }
             if (leavesBoard && !FitsGate(block, target, direction)) return MoveResult.Blocked;
+            return leavesBoard ? MoveResult.Cleared : MoveResult.Moved;
+        }
+
+        public MoveResult TryStep(int blockIndex, Vector2Int direction)
+        {
+            MoveResult result = PreviewStep(blockIndex, direction);
+            if (result == MoveResult.Blocked) return result;
+            BlockState block = blocks[blockIndex];
             WriteOccupancy(block, -1);
-            if (leavesBoard)
+            if (result == MoveResult.Cleared)
             {
                 block.cleared = true;
                 ClearedCount++;
-                return MoveResult.Cleared;
             }
-            block.origin = target;
-            WriteOccupancy(block, blockIndex);
-            return MoveResult.Moved;
+            else
+            {
+                block.origin += direction;
+                WriteOccupancy(block, blockIndex);
+            }
+            return result;
         }
 
         private bool FitsGate(BlockState block, Vector2Int target, Vector2Int direction)
