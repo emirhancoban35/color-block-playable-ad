@@ -16,14 +16,25 @@ namespace Playable.Editor
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1080, 1920);
             scaler.matchWidthOrHeight = 0.5f;
+            RectTransform headerBackground = NewRect("Header Background", root.transform);
+            headerBackground.anchorMin = new Vector2(0f, 1f);
+            headerBackground.anchorMax = Vector2.one;
+            headerBackground.offsetMin = new Vector2(0f, -170f);
+            headerBackground.offsetMax = Vector2.zero;
+            Image headerImage = headerBackground.gameObject.AddComponent<Image>();
+            headerImage.color = Color.white;
+            headerImage.raycastTarget = false;
             RectTransform safeRoot = NewRect("Safe Area", root.transform);
             RectTransform header = NewRect("Header", safeRoot);
-            header.anchorMin = header.anchorMax = new Vector2(0.5f, 0.945f);
-            header.sizeDelta = new Vector2(1080, 170);
-            Image headerBackground = header.gameObject.AddComponent<Image>();
-            headerBackground.color = Color.white;
-            headerBackground.raycastTarget = false;
+            header.anchorMin = new Vector2(0f, 1f);
+            header.anchorMax = Vector2.one;
+            header.pivot = new Vector2(0.5f, 1f);
+            header.sizeDelta = new Vector2(0f, 170f);
+            header.anchoredPosition = Vector2.zero;
             Text title = Label("Title", flow.hookText, font, 64, header, new Vector2(0.5f, 0.5f), new Vector2(1000, 145));
+            title.rectTransform.anchorMin = new Vector2(0f, 0.5f);
+            title.rectTransform.anchorMax = new Vector2(1f, 0.5f);
+            title.rectTransform.sizeDelta = new Vector2(-80f, 145f);
             title.fontStyle = FontStyle.Bold;
             title.color = new Color(0.03f, 0.3f, 0.65f);
             Text progress = Label("Progress", "", font, 38, safeRoot, new Vector2(0.5f, 0.86f), new Vector2(900, 70));
@@ -52,7 +63,7 @@ namespace Playable.Editor
             instruction.gameObject.SetActive(false);
             PlayableHud hud = root.AddComponent<PlayableHud>();
             Outlined(ctaText);
-            hud.Configure(safeRoot, progress, tutorial, endCard, endTitle, subtitle, cta, ctaText, title, instruction);
+            hud.Configure(safeRoot, progress, tutorial, endCard, endTitle, subtitle, cta, ctaText, title, instruction, headerBackground);
             return hud;
         }
 

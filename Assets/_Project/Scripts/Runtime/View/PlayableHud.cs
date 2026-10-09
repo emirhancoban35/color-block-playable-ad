@@ -16,12 +16,13 @@ namespace Playable.View
         [SerializeField] private Text ctaText;
         [SerializeField] private Text hook;
         [SerializeField] private RectTransform instruction;
+        [SerializeField] private RectTransform headerBackground;
         private float visualTime, resultTime = -1f;
         private bool fullScreenClick;
 
 #if UNITY_EDITOR
         public void Configure(RectTransform safe, Text progressLabel, Text tutorialLabel, GameObject card,
-            Text resultLabel, Text subtitleLabel, RectTransform button, Text buttonLabel, Text hookLabel, RectTransform instructionPanel)
+            Text resultLabel, Text subtitleLabel, RectTransform button, Text buttonLabel, Text hookLabel, RectTransform instructionPanel, RectTransform headerPanel)
         {
             safeRoot = safe;
             progress = progressLabel;
@@ -33,6 +34,7 @@ namespace Playable.View
             ctaText = buttonLabel;
             hook = hookLabel;
             instruction = instructionPanel;
+            headerBackground = headerPanel;
         }
 #endif
         public void Initialize(AdFlowConfig flow)
@@ -57,6 +59,7 @@ namespace Playable.View
             safeRoot.anchorMin = new Vector2(safe.xMin / Screen.width, safe.yMin / Screen.height);
             safeRoot.anchorMax = new Vector2(safe.xMax / Screen.width, safe.yMax / Screen.height);
             safeRoot.offsetMin = safeRoot.offsetMax = Vector2.zero;
+            headerBackground.anchorMin = new Vector2(0f, safeRoot.anchorMax.y);
         }
         public void Progress(int cleared, int total, int moves) { if (!progress.gameObject.activeSelf) return; progress.text = cleared + " / " + total + " CLEARED   ·   " + moves + " MOVES"; }
         public void Tutorial(bool visible) { if (instruction.gameObject.activeSelf != visible) instruction.gameObject.SetActive(visible); }
