@@ -1,122 +1,110 @@
 # Color Block Playable Framework
 
-**Unity + Playworks ile, editörde hazırlanan ve farklı kreatiflerde tekrar kullanılabilen bir color block puzzle playable altyapısı.**
+A Color Block Jam-inspired playable ad built with Unity and Playworks. Levels, visuals, and ad flow are configured through ScriptableObjects and prepared with a single editor tool.
 
-Color Block Jam’in renk eşleştirme ve blok çıkarma hissinden yola çıkan bağımsız bir portföy çalışması. Amaç yalnızca tek bir reklam sahnesi üretmek değil; level, tema ve reklam akışını değiştirerek aynı araçtan yeni playable varyantları hazırlamak.
-
-Öncelik sırası: **düşük runtime maliyeti → küçük build → kolay varyant üretimi → temiz, anlaşılır kod.**
+I built this as a portfolio project, with most of the scene setup done in the editor. The runtime handles input, grid rules, animation, and the ad session. Blocks, meshes, UI, and effects are already in the scene when it starts.
 
 <p align="center">
-  <img src="docs/images/gameplay-portrait.png" width="300" alt="80 bloklu stres varyantının dikey Unity önizlemesi; üst başlık, renkli çıkışlar ve PLAY NOW butonu">
+  <img src="docs/images/gameplay-portrait.png" width="300" alt="80-block level in portrait orientation, rendered in Unity">
 </p>
 
-<p align="center"><em>80 blok, 8 renk ve 8 çıkış. Bu görsel Unity’de alınan responsive yerleşim önizlemesidir.</em></p>
-
-| | Kullanılan yapı |
+| | |
 | --- | --- |
 | Unity | `6000.0.72f1` |
 | Playworks / Luna SDK | `7.2.0` |
-| Oynanış | Grid üzerinde blok sürükleme ve aynı renkli çıkıştan çıkarma |
-| Görsel yöntem | Ortografik kamera, düz mesh’ler ve vertex renkleriyle hacim hissi |
-| İçerik hazırlama | ScriptableObject config’leri → editör aracı → hazır Unity sahnesi |
-| Güncel yoğun varyant | 16 × 20 grid, 80 adet dört hücreli blok |
-| Runtime efekt | Önceden hazırlanmış 12 mesh parçası; fizik simülasyonu yok |
-| Runtime bağımlılık yaklaşımı | Doğrudan referanslar; DI container ve tween kütüphanesi kullanılmıyor |
+| Gameplay | Drag blocks to matching exits |
+| Rendering | Orthographic camera, flat meshes, vertex colors |
+| Level setup | ScriptableObjects and an editor window |
+| Stress level | 16 × 20 grid, 80 blocks, 8 colors, 8 exits |
+| Effects | 12 reusable mesh fragments |
 
-## İçindekiler
+## Contents
 
-- [Projenin kapsamı](#projenin-kapsamı)
-- [Kurulum ve ilk çalıştırma](#kurulum-ve-ilk-çalıştırma)
-- [Level ve varyant tasarlama](#level-ve-varyant-tasarlama)
-- [Mimari](#mimari)
-- [3D gibi görünen hafif görseller](#3d-gibi-görünen-hafif-görseller)
-- [Oynanış ve reklam akışı](#oynanış-ve-reklam-akışı)
-- [Responsive UI ve çentik desteği](#responsive-ui-ve-çentik-desteği)
-- [Optimizasyon kararları](#optimizasyon-kararları)
-- [Performans ve build boyutu](#performans-ve-build-boyutu)
-- [Doğrulama ve testler](#doğrulama-ve-testler)
-- [Yeni özellik ekleme](#yeni-özellik-ekleme)
-- [Klasör yapısı ve sorun giderme](#klasör-yapısı-ve-sorun-giderme)
+- [Setup](#setup)
+- [Designing levels](#designing-levels)
+- [Architecture](#architecture)
+- [Visuals](#visuals)
+- [Ad flow](#ad-flow)
+- [Responsive UI](#responsive-ui)
+- [Optimization](#optimization)
+- [Performance and build size](#performance-and-build-size)
+- [Tests](#tests)
+- [Extending the project](#extending-the-project)
+- [Project structure](#project-structure)
+- [Troubleshooting](#troubleshooting)
 
-## Projenin kapsamı
+## Setup
 
-Altyapı; çok hücreli blokları, farklı şekilleri, engelleri, pasif hücreleri, dört kenardaki renkli çıkışları ve hareket kısıtlarını destekler. Aynı oyun modeli farklı level düzenleriyle kullanılabilir.
+1. Open the project in Unity **6000.0.72f1**.
+2. Download and extract the Playworks **7.2.0** SDK to a permanent location outside the project.
+3. Open **Tools → Color Block → Framework**.
+4. Click **Connect Playworks SDK…** and select **`scripts/package.json`** inside the extracted SDK. The SDK root should also contain `pipeline` and `tools`.
+5. Let Unity resolve the package and compile, then sign in to Playworks.
+6. Select a config in **Active Variant**.
+7. Click **Validate variant**, then **Prepare playable scene**.
+8. Open `Assets/_Project/Scenes/Playable_2D.unity` and enter Play Mode.
 
-Mevcut içerik katmanları:
+The editor synchronizes the `PLAYWORKS_SDK` scripting define when it detects the SDK. Without it, the game can still be previewed in Unity; store clicks are logged instead of opening a store. Release builds require the SDK.
 
-| Config | Sorumluluk |
+If you move the SDK folder or open the project on another machine, reconnect it through the Framework window.
+
+## Designing levels
+
+### Configs
+
+Each variant references three configs:
+
+| Asset | Contents |
 | --- | --- |
-| `LevelConfig` | Grid boyutu, hücre istisnaları, bloklar ve çıkışlar |
-| `VisualThemeConfig` | Palet, board/duvar rengi, aralıklar, köşe yarıçapı, çıkıntılar ve ortak materyal |
-| `AdFlowConfig` | CTA davranışı, metinler, tutorial, bitiş koşulları ve etkileşim süresi |
-| `PlayableVariantConfig` | Bu üç config’in birleşimi; hareket ve çıkış animasyonu süreleri |
+| `LevelConfig` | Grid dimensions, cell overrides, block shapes, positions, and exits |
+| `VisualThemeConfig` | Palette, board and frame colors, gaps, corner radius, studs, and material |
+| `AdFlowConfig` | Text, tutorial, CTA behavior, interaction timing, and end conditions |
+| `PlayableVariantConfig` | References to the above, plus movement speed and exit duration |
 
-Hazır varyantlar:
+The included variants are:
 
-| Varyant | Kullanım |
+| Variant | Level |
 | --- | --- |
-| `Variant_A` / `Variant_B` | Starter level üzerinden farklı reklam akışlarını denemek |
-| `Variant_Showcase` | 8 × 10 grid üzerinde 20 blok ve 4 alt çıkış |
-| `Variant_Stress` | 16 × 20 grid üzerinde 80 blok, 8 renk ve 8 alt çıkış |
+| `Variant_A` / `Variant_B` | Starter level with different ad flows |
+| `Variant_Showcase` | 8 × 10 grid, 20 blocks, 4 bottom exits |
+| `Variant_Stress` | 16 × 20 grid, 80 blocks, 8 bottom exits |
 
-Güncel hazırlanmış sahne `Variant_Stress` kullanır. Daha küçük showcase varyantı korunur. Bunlar runtime’da sırayla yüklenen level’lar değildir; build öncesinde bir varyant seçilip sahne hazırlanır.
+The prepared scene uses `Variant_Stress`. One variant is prepared for each build; levels are not loaded in sequence at runtime.
 
-## Kurulum ve ilk çalıştırma
+### Editor controls
 
-1. Projeyi Unity **6000.0.72f1** ile aç.
-2. Playworks **7.2.0** SDK paketini indir ve kalıcı bir klasöre çıkar. SDK proje dışında tutulur.
-3. Unity’de **Tools → Color Block → Framework** penceresini aç.
-4. **Connect Playworks SDK…** ile SDK içindeki **`scripts/package.json`** dosyasını seç. SDK kökünde `pipeline` ve `tools` klasörleri de bulunmalıdır.
-5. Paket çözümlemesi ve derleme tamamlandıktan sonra Playworks hesabına kendi kurulumunda giriş yap.
-6. Framework penceresinde **Active Variant** alanından bir varyant seç.
-7. **Validate variant**, ardından **Prepare playable scene** düğmesine bas.
-8. Hazırlanan `Assets/_Project/Scenes/Playable_2D.unity` sahnesini açıp Play Mode’da dene.
+Open **Tools → Color Block → Framework**.
 
-SDK bağlanınca editör kodu `PLAYWORKS_SDK` tanımını senkronize eder. SDK olmadan Unity içi önizleme yapılabilir; mağaza yönlendirmesi önizlemede bir log ile temsil edilir. Playworks release akışı SDK gerektirir.
-
-SDK klasörünü taşırsan bağlantıyı yeniden kur. Proje başka makinede açıldığında eski bilgisayara ait yerel SDK yolu geçerli olmayabilir.
-
-## Level ve varyant tasarlama
-
-### Framework penceresi
-
-**Tools → Color Block → Framework** tek hazırlama ekranıdır.
-
-| Bölüm / işlem | Ne yapar? |
+| Control | Action |
 | --- | --- |
-| **Active Variant** | Düzenlenecek ve sahneye hazırlanacak varyantı seçer |
-| **Selected Block** | Grid’de hangi bloğun konumunun değişeceğini belirler |
-| Grid üzerinde tıklama / sürükleme | Seçili bloğun origin konumunu değiştirir |
-| **Shift + tık** | Hücrede engel istisnasını ekler veya mevcut istisnayı kaldırır |
-| **Level / shapes / gates** | Blok listesi, şekil hücreleri, renkler ve çıkışları Inspector üzerinden düzenler |
-| **Theme / palette** | Görsel parametreleri düzenler |
-| **Ad flow** | Reklam davranışını ve metinlerini düzenler |
-| **Validate variant** | İçeriğin yapısal olarak geçerli olup olmadığını kontrol eder |
-| **Prepare playable scene** | Seçili içerikten kamera, HUD, board, blok ve efekt objelerini editörde hazırlar |
+| **Active Variant** | Select the variant to edit and prepare |
+| **Selected Block** | Choose the block to move on the grid |
+| Click or drag on the grid | Set the selected block's origin |
+| **Shift + click** | Add an obstacle override, or remove an existing cell override |
+| **Level / shapes / gates** | Edit block lists, shape cells, colors, and exits |
+| **Theme / palette** | Edit visual settings |
+| **Ad flow** | Edit text, timing, and session behavior |
+| **Validate variant** | Check the configuration for errors |
+| **Prepare playable scene** | Generate and save the scene |
 
-Mevcut araç temel bir grid editörü ve birleşik Inspector’dır. Blok/çıkış eklemek veya bir şeklin hücrelerini çizmek için hâlâ listeler düzenlenir; tam bir boyama aracı ya da otomatik puzzle üreticisi değildir. Grid önizlemesi oynanış simülasyonu yapmaz.
+The window combines a grid preview with the config Inspectors. Positions can be edited on the grid; new blocks, shape cells, and exits are added through their lists.
 
-### Yeni bir level oluşturma
+### Creating a variant
 
-1. Project penceresinde **Create → Playable → Data → Level Config** ile bir level oluştur. İstersen `Level_Starter` veya `Level_Showcase` asset’ini çoğalt.
-2. **Create → Playable → Data → Variant Config** ile yeni varyant oluştur veya mevcut bir varyantı çoğalt.
-3. Varyantın `levelConfig` alanına yeni level’ı bağla. Bir tema ve reklam akışı ata.
-4. `variantId` için anlamlı bir isim ver.
-5. Grid boyutunu, blokları ve çıkışları düzenle.
-6. Framework’te bu varyantı seç, doğrula ve sahneyi hazırla.
+1. Create a level through **Create → Playable → Data → Level Config**, or duplicate `Level_Starter` / `Level_Showcase`.
+2. Create a variant through **Create → Playable → Data → Variant Config**, or duplicate an existing variant.
+3. Assign the level, theme, and ad flow.
+4. Set a `variantId`.
+5. Edit the board, blocks, and exits.
+6. Select the variant in the Framework window, validate it, and prepare the scene.
 
-**Bir varyantı çoğaltmak bağlı config’leri çoğaltmaz.** İki varyant aynı theme veya flow asset’ini kullanıyorsa o asset’teki değişiklik ikisini de etkiler. Bağımsız bir kreatif istiyorsan ilgili config’leri de çoğaltıp yeniden bağla.
+Duplicating a variant keeps its existing config references. Duplicate the level, theme, or flow as well if you want to edit it independently. Shared configs are useful when several creatives should use the same palette or ad behavior.
 
-### Koordinatlar ve blok şekilleri
+### Grid and shapes
 
-Grid’in sol alt hücresi `(0, 0)`’dır. X sağa, Y yukarı artar. Board boyutları 1–64 hücre aralığında olabilir; bu veri sınırı her büyüklükte board’un mobilde aynı performansı vereceği anlamına gelmez.
+The bottom-left cell is `(0, 0)`. X increases to the right and Y increases upward. Grid dimensions range from 1 to 64 cells per axis.
 
-Bir blok iki parçayla tanımlanır:
-
-- **`origin`:** Şeklin board üzerindeki başlangıç koordinatı.
-- **`localCells`:** Origin’e göre şeklin kapladığı hücreler.
-
-Örnek bir 2 × 2 blok:
+A block has an `origin` on the board and a list of `localCells` describing its shape. For example:
 
 ```text
 id: red_square
@@ -126,45 +114,54 @@ localCells: [(0, 0), (1, 0), (0, 1), (1, 1)]
 movementMode: Free
 ```
 
-Bir L şekli için örneğin `[(0, 0), (1, 0), (0, 1)]` kullanılabilir. Şeklin hücreleri birbirine bağlı olmalı ve tekrar etmemelidir. Bloklar üst üste gelemez, board dışına veya engel/pasif hücre üzerine yerleşemez.
+That creates a 2 × 2 block. An L shape could use `[(0, 0), (1, 0), (0, 1)]`.
 
-`cells` listesi boşsa board’un tamamı aktif kabul edilir. Liste, tüm zemini tek tek tanımlamak yerine yalnızca istisnaları tutar: `isBlocker` ile engel, `isActive = false` ile pasif hücre.
+Shapes must be connected and cannot contain duplicate cells. Blocks cannot overlap, leave the board, or occupy blocked or inactive cells.
 
-Hareket seçenekleri: `Free`, `HorizontalOnly`, `VerticalOnly`, `UpOnly`, `DownOnly`, `LeftOnly`, `RightOnly`, `Locked`. Serbest bloklar da grid üzerinde yatay/dikey adımlarla ilerler; çapraz bir hücre adımı uygulanmaz.
+An empty `cells` list creates a fully active rectangular board. Add entries only for exceptions: `isBlocker` marks an obstacle, and `isActive = false` disables a cell.
 
-### Çıkışlar
+Movement modes:
 
-Her çıkışın benzersiz bir `id`, bir `colorId`, bir `side`, bir `startIndex` ve bir `length` değeri vardır.
+- `Free`
+- `HorizontalOnly` / `VerticalOnly`
+- `UpOnly` / `DownOnly` / `LeftOnly` / `RightOnly`
+- `Locked`
 
-| Kenar | `startIndex` hangi eksende? |
+Movement is resolved as horizontal or vertical grid steps, including for `Free` blocks.
+
+### Exits
+
+Each exit has a unique `id`, a `colorId`, a `side`, a `startIndex`, and a `length`.
+
+| Side | Index direction |
 | --- | --- |
-| `Top` / `Bottom` | Soldan sağa X koordinatı |
-| `Left` / `Right` | Alttan üste Y koordinatı |
+| `Top` / `Bottom` | X, from left to right |
+| `Left` / `Right` | Y, from bottom to top |
 
-Örnekteki kırmızı 2 × 2 blok için alt çıkış: `side = Bottom`, `startIndex = 0`, `length = 2`, `colorId = Red`.
+A bottom exit for the red square above would use `side = Bottom`, `startIndex = 0`, `length = 2`, and `colorId = Red`.
 
-Bloğun rengi çıkışla eşleşmeli ve şeklin tamamı **tek bir çıkışın** açıklığına sığmalıdır. Komşu iki çıkış, tek bir geniş çıkış gibi davranmaz. Çıkışlar aynı kenarda çakışamaz.
+The block must match the exit's color and fit completely through a single opening. Adjacent exits do not combine into a wider opening. Exits on the same edge cannot overlap.
 
-Blok ve çıkış renkleri sekiz oynanış renginden seçilir. `Slate` ve `Navy`, board/çerçeve gibi yüzeyler için ek palet kimlikleridir; blok veya çıkış rengi olarak kullanılmaz.
+Blocks and exits use the eight gameplay colors. `Slate` and `Navy` are additional palette IDs for surfaces such as the board and frame.
 
-### Sahneyi hazırlama
+### Preparing the scene
 
-`Prepare playable scene`, runtime’da üretilecek işi editöre taşır:
+**Prepare playable scene** validates the selected variant and creates:
 
-1. Config’leri doğrular.
-2. Board, duvarlar ve çıkışları tek mesh’e hazırlar.
-3. Blok şekilleri için kalıcı, paylaşılabilir mesh asset’leri oluşturur veya önbellekten kullanır.
-4. Blok Transform’larını ve renk referanslarını kurar.
-5. Kamera, HUD, seçim görünümü, arka plan ve parçalanma havuzunu hazırlar.
-6. Sahneyi kaydeder ve build sahnesi olarak seçer.
+- A combined mesh for the floor, walls, and exits.
+- Persistent shape meshes, shared by blocks with matching geometry.
+- Block objects and their color references.
+- The camera, HUD, background, selection outline, and fragment pool.
 
-Araç kendi ürettiği içerikleri yeniler; bootstrap altına elle eklenen bağımsız objeleri korumak için rebuild kontrolü bulunur. Üretilen board/HUD’un içini elle değiştirmek yerine ilgili config veya builder’ı düzenlemek gerekir; bu bölümler yeniden hazırlamada değiştirilir.
+It then saves the scene and selects it for the build.
 
-**Level, blok şekli, tema veya aktif varyant değiştiğinde sahneyi tekrar hazırla.** Yalnızca SO’yu değiştirmek, daha önce hazırlanmış mesh ve objeleri otomatik güncellemez.
+Rebuilds replace the generated board, camera, and HUD. Independent objects added under the bootstrap are preserved. Changes to generated content should go through the configs or builders so they survive the next rebuild.
 
-Validator geometrik/verisel hataları yakalar; her özel level’ın çözülebilirliğini kanıtlayan genel bir solver değildir. 80 blokluk hazır bölümün çözülebilirliği ayrıca test edilmiştir.
+Run **Prepare playable scene** again after changing a level, shape, theme, or active variant. Editing a config alone does not rebuild the saved geometry.
 
-## Mimari
+Validation checks configuration errors. The 80-block level also has a solution test; arbitrary custom levels still need a playthrough.
+
+## Architecture
 
 ```mermaid
 flowchart LR
@@ -172,7 +169,7 @@ flowchart LR
     T[VisualThemeConfig] --> V
     F[AdFlowConfig] --> V
     V --> E[Framework / SceneBuilder]
-    E --> S[Hazırlanmış Unity sahnesi]
+    E --> S[Prepared Unity scene]
     S --> B[PlayableBootstrap]
     B --> G[GridBoard]
     B --> W[BoardView / HUD / ExitBurst]
@@ -181,298 +178,295 @@ flowchart LR
     P --> SDK[Playworks / Luna]
 ```
 
-| Sınıf | Görev ve tercih nedeni |
+| Class | Responsibility |
 | --- | --- |
-| [`GridBoard`](Assets/_Project/Scripts/Runtime/Core/GridBoard.cs) | Doluluk, şekiller, hareket ve çıkış kuralları. MonoBehaviour veya fizik bağımlılığı olmadan test edilebilir |
-| [`PlayableBootstrap`](Assets/_Project/Scripts/Runtime/PlayableBootstrap.cs) | Input, hareket, efekt, tutorial, reklam akışı ve kamera için tek koordinasyon noktası |
-| [`BoardView`](Assets/_Project/Scripts/Runtime/View/BoardView.cs) | Hazır Transform’lar, renkler, hareket kuyruğu ve seçim görünümü |
-| [`ExitBurst`](Assets/_Project/Scripts/Runtime/View/ExitBurst.cs) | Önceden hazırlanmış parçaların konum/dönüş/boyut animasyonu |
-| [`PlayableHud`](Assets/_Project/Scripts/Runtime/View/PlayableHud.cs) | Metinler, CTA, responsive alan ve hafif UI animasyonları |
-| [`AdSession`](Assets/_Project/Scripts/Runtime/Flow/AdSession.cs) | Hamleler, bitiş koşulları ve aktif etkileşim süresi |
-| [`PlayablePlatform`](Assets/_Project/Scripts/Runtime/Platform/PlayablePlatform.cs) | Analytics, pause/resume ve mağaza çağrılarının tek SDK sınırı |
-| [`PlayableSceneBuilder`](Assets/_Project/Scripts/Editor/PlayableSceneBuilder.cs) | Config’lerden kaydedilmiş sahne hazırlama |
-| [`FlatMeshBuilder`](Assets/_Project/Scripts/Editor/FlatMeshBuilder.cs) | Görsel geometriyi editörde üretme ve sıkıştırma |
+| [`GridBoard`](Assets/_Project/Scripts/Runtime/Core/GridBoard.cs) | Occupancy, shapes, movement constraints, and exit rules |
+| [`PlayableBootstrap`](Assets/_Project/Scripts/Runtime/PlayableBootstrap.cs) | Input and coordination of movement, hints, effects, camera, and ad flow |
+| [`BoardView`](Assets/_Project/Scripts/Runtime/View/BoardView.cs) | Prepared transforms, colors, movement queue, and selection visuals |
+| [`ExitBurst`](Assets/_Project/Scripts/Runtime/View/ExitBurst.cs) | Fragment movement, rotation, scaling, and reuse |
+| [`PlayableHud`](Assets/_Project/Scripts/Runtime/View/PlayableHud.cs) | Text, CTA, safe-area layout, and UI animation |
+| [`AdSession`](Assets/_Project/Scripts/Runtime/Flow/AdSession.cs) | Moves, elapsed time, interaction time, and end conditions |
+| [`PlayablePlatform`](Assets/_Project/Scripts/Runtime/Platform/PlayablePlatform.cs) | Analytics, pause/resume, and store calls |
+| [`PlayableSceneBuilder`](Assets/_Project/Scripts/Editor/PlayableSceneBuilder.cs) | Config-to-scene preparation |
+| [`FlatMeshBuilder`](Assets/_Project/Scripts/Editor/FlatMeshBuilder.cs) | Geometry generation and compaction in the editor |
 
-### Model ile görünüm neden ayrı?
+### Grid model
 
-`GridBoard` kaynak SO verisini başlangıçta kopyalar. Oyuncu bir bloğu hareket ettirdiğinde config asset’i değişmez. `PreviewStep` bir hareketi uygulamadan sorgular; ipucu sistemi aynı kuralları kullanır.
+`GridBoard` copies the level data at startup. Moving a block updates runtime state without modifying the source ScriptableObject.
 
-Bir hareket geçersizse doluluk tablosu değişmez. Geçerliyse model önce yeni hücreleri doğrular, sonra eski/yeni doluluğu günceller. Görünüm bu sonucu animasyonla takip eder. Böylece görsel yumuşatma oynanışın doğruluğunu belirlemez.
+A step is checked before occupancy changes. Rejected steps leave the board untouched; accepted steps update the old and new cells. `PreviewStep` runs the same checks without applying the move, which lets the hint system use the actual movement rules.
 
-### Neden Zenject veya büyük bir framework yok?
+The model has no MonoBehaviour or physics dependency. Visuals follow its results with interpolation, so animation timing does not decide whether a move is valid.
 
-Bu kapsamda bağımlılıklar az ve açık: sahnedeki hazır referanslar ile küçük birkaç runtime sınıfı yeterli. DI container, genel event bus veya her obje için controller katmanı eklemek mevcut probleme gerekli bir çözüm getirmiyordu. Genişletilebilirlik; config sınırları, model/view ayrımı ve SDK adaptörü üzerinden sağlanır.
+### Dependencies
 
-## 3D gibi görünen hafif görseller
+I kept dependencies as direct scene references and small runtime classes. The current setup does not need a DI container, a general event bus, or a separate Update loop on each block. Configs, the grid model, and the platform adapter provide the main extension points.
 
-Board ve bloklar `MeshRenderer` kullanır; görünüm **ortografik kamera önündeki düz geometri** ile oluşturulur. Küçük Z farkları katman sırasını belirler. Hacim hissinin büyük kısmı renge ve siluete gömülüdür.
+## Visuals
 
-| Görünen detay | Nasıl oluşturuluyor? |
+The board uses flat meshes in front of an orthographic camera. Small Z offsets separate the layers. Rounded silhouettes and baked color differences give the pieces their depth.
+
+| Detail | Implementation |
 | --- | --- |
-| Yuvarlatılmış blok köşeleri | Mesh’in köşe geometrisi |
-| Kalın blok kenarları | Açık üst kenar, koyu yan/alt yüzey renkleri |
-| Dairesel çıkıntılar | Birkaç renkli disk katmanı |
-| Kalın board duvarları | Ton farkları ve alt yüzey geometrisi |
-| Ayrı dış köşeler | Kenarlardan ayrılan yuvarlatılmış köşe parçaları |
-| Zemin hissi | Koyu board tabanı üzerindeki hafif aralıklı hücre yüzeyleri |
-| Beyaz seçim vurgusu | Seçili şeklin aynı mesh’ini kullanan, biraz büyütülmüş ikinci renderer |
-| Hafif yükselme | Seçili bloğun ölçeğinin yumuşakça büyümesi |
+| Rounded blocks | Corner geometry |
+| Thick edges | Bright top edges and darker sides/undersides |
+| Studs | Layered colored discs |
+| Board frame | Shaded faces and a darker lower layer |
+| Outer corners | Separate rounded corner sections |
+| Floor | Spaced cell surfaces over a darker base |
+| Selection outline | A slightly enlarged copy of the selected block's shared mesh |
+| Pickup | Smooth scale increase on the selected block |
 
-Bu yüzeylerin görünümü için büyük blok/zemin PNG’leri, gerçek zamanlı ışıklar, gölge haritaları veya fizik objeleri gerekmiyor. UI fontları ayrı olarak atlas kullanır; “texturesiz board” tüm uygulamada hiç texture olmadığı anlamına gelmez.
+Board and block surfaces use vertex colors rather than texture assets. Their shading needs no real-time lights or shadow maps.
 
-### Renkler ve ortak şekiller
+### Shared shapes and colors
 
-Blok şekilleri beyaz tabanlı gölgelendirmeyle hazırlanır. Palet rengi renderer üzerinden uygulanır. Aynı şekil ve tema geometrisini kullanan farklı renkli bloklar aynı mesh asset’ini paylaşır.
+Shape meshes are generated with white shading. Each renderer applies its palette tint, allowing different-colored blocks to share the same mesh.
 
-`ColorId` ile blok, çıkış, board ve çerçeve için anlamlı palet kimlikleri seçilir. Paletteki gerçek tonlar `VisualThemeConfig` üzerinden yönetilir; board ve çerçeve ayrı enum seçimleriyle ayarlanır.
+Board and frame colors are selected through `ColorId` fields. The actual shades live in `VisualThemeConfig`.
 
-Playworks ile Unity’nin renk dönüşümünde fark görüldüğü için blok tint’i açıkça uygun renk uzayına çevrilip `SetVector("_Color", ...)` ile gönderilir. Farklı renkteki bloklar için aynı `MaterialPropertyBlock` değiştirilerek tekrar kullanılmaz: SDK referansı koruduğunda tüm blokların son renge dönüşmesi önlenir.
+During development, reusing a mutable `MaterialPropertyBlock` caused blocks to take the last assigned color in Playworks. Each block now gets its own property block. The tint is converted explicitly and sent through `SetVector("_Color", ...)` to keep Unity and Playworks color handling consistent.
 
-Ortak mesh ve materyal, bütün sahnenin tek draw call olduğu anlamına gelmez. Renk override’ları, UI ve batching sınırları gerçek çizim sayısını etkiler.
+Blocks share a material and geometry, while renderer color overrides and batching limits determine the final draw count.
 
-### Hareketli arka plan
+### Background
 
-[`MovingWater.shader`](Assets/_Project/Shaders/MovingWater.shader), `_Time` üzerinden hafif bir dalga deseni üretir. 91 vertex / 144 üçgenden oluşan küçük bir mesh kullanır. Dalga hesabı vertex aşamasındadır; fragment aşaması gelen rengi döndürür.
+[`MovingWater.shader`](Assets/_Project/Shaders/MovingWater.shader) animates a small **91-vertex / 144-triangle** mesh using `_Time`. Wave calculations run in the vertex shader; the fragment shader returns the interpolated color.
 
-Arka plan için video, büyük texture animasyonu veya C# tarafında her kare mesh üretimi kullanılmaz. Bu tercih indirme boyutunu küçük tutar; yine de tam ekran çizimin ekran çözünürlüğüne bağlı bir GPU maliyeti vardır.
+This keeps the moving background to one mesh and a shader, without a video, texture sequence, or per-frame C# mesh generation.
 
-### UI ve parçalanma
+### UI
 
-CTA arka planı [`RoundedButtonGraphic`](Assets/_Project/Scripts/Runtime/View/RoundedButtonGraphic.cs) ile çizilir: yuvarlatılmış yüz, koyu kenar ve alt gölge. UI mesh’i 51 vertex / 48 üçgendir. Büyük bir buton PNG’si yerine renklenebilir geometri kullanılır.
+The CTA background is drawn by [`RoundedButtonGraphic`](Assets/_Project/Scripts/Runtime/View/RoundedButtonGraphic.cs): a rounded face, dark border, and lower shadow using **51 vertices / 48 triangles**.
 
-CTA ve tutorial’da **Lilita One**, başlık ve yardımcı metinlerde Unity’nin **LegacyRuntime** fontu kullanılır. Lilita metinler beyaz yazı ve koyu outline ile hazırlanır. CTA’nın küçük scale döngüsü ve metin girişleri basit zaman/lerp işlemleridir; tween paketi gerekmez.
+CTA and tutorial text use **Lilita One** with white fill and a dark outline. The header and supporting labels use Unity's **LegacyRuntime** font. The current tutorial copy is **“Tap and clear the board!”**
 
-Çıkış efekti bir `ParticleSystem` değildir. **12 hazır mesh parçası** ortak küçük şekli kullanır; konum, dönüş ve ölçekleri tek sınıftan ilerletilir. Objeler hazır durur, renderer’lar yalnızca efekt sırasında açılır. Güncel çıkış süresinde efekt yaklaşık 0,6 saniye sürer.
+The button pulse, text entrance, pickup, and release animations use simple time and interpolation calculations.
+
+### Exit fragments
+
+The exit effect uses **12 prepared mesh fragments**. Each shares the same small shape; one class updates their position, rotation, and scale. Renderers are enabled for the burst and disabled when it finishes. The current effect lasts about 0.6 seconds.
 
 <p align="center">
-  <img src="docs/images/exit-fragments.png" width="360" alt="Unity önizlemesinde alt kırmızı çıkıştan saçılan hazır mesh parçaları">
+  <img src="docs/images/exit-fragments.png" width="360" alt="Red mesh fragments leaving the bottom exit in Unity">
 </p>
 
-<p align="center"><em>Parçalanma efektinin Unity görünürlük kontrolü. Ek fizik veya runtime obje üretimi kullanılmaz.</em></p>
+The pool avoids runtime object creation and physics simulation. Only one exit effect runs at a time.
 
-## Oynanış ve reklam akışı
+## Ad flow
 
-Güncel showcase/stress akışı:
+The showcase and stress variants use this flow:
 
-1. Hook, board ve CTA gösterilir.
-2. Tutorial, config’teki kısa gecikmeden sonra açılır.
-3. Oyuncu bloğu tutup sürükler. Model hücre adımlarını doğrular; görünüm konumu yumuşatır.
-4. Aynı renkli çıkıştan çıkan blok gizlenir ve hazır parçalanma efekti oynar.
-5. Oyuncu bir süre beklerse, geçerli bir adım yapabilen blok kısa süreli vurgulanır.
-6. CTA başlangıçtan itibaren mağaza çağrısını yapabilir.
-7. **Toplam 10 saniye aktif blok etkileşiminden sonra**, sonraki yeni ekran dokunuşu da mağaza çağrısını yapar.
+1. Show the hook, board, and CTA.
+2. Display the tutorial after a short delay.
+3. Highlight and slightly enlarge a held block. Interpolate its position as grid steps are accepted.
+4. Hide an escaped block and play the fragment burst.
+5. After an idle period, briefly highlight a block with a valid move.
+6. Keep the CTA available throughout the session.
+7. After **10 seconds of active block interaction**, let the next new screen press open the store as well.
 
-Aktif etkileşim, geçerli bir bloğun tutulduğu/sürüklendiği süredir; her kare yeni bir hücreye ilerleme zorunluluğu yoktur. Boş yere basmak, beklemek ve pause süresi bu sayaç yerine geçmez. Eşik dolduğu anda otomatik yönlendirme yapılmaz; sonraki pointer-down beklenir.
+Interaction time counts while a valid block is held or dragged. Waiting, pressing empty space, and paused time do not count. Reaching the threshold arms the next press; it does not interrupt the current drag with an automatic store redirect.
 
-Güncel flow `Manual` kullanır: ekranda zorunlu bir skor/hamle hedefi veya otomatik kazanma end card’ı gösterilmez. Altyapıda ayrıca tüm bloklar, hedef blok sayısı, süre ve hamle sınırı üzerinden bitiş seçenekleri bulunur.
+The current flow uses `Manual`, with no score target or automatic win card. Other configs can end on all blocks cleared, a target clear count, a timer, or a move limit.
 
-### Analytics ve Playworks alanları
+### Analytics
 
-SDK çağrıları yalnızca `PlayablePlatform` içinde toplanır.
+SDK calls are kept in `PlayablePlatform`.
 
-| Olay | Tetiklenme koşulu |
+| Event | Trigger |
 | --- | --- |
-| `TutorialStarted` | Tutorial açık config ile oturum başlarken |
-| `FirstMoveCompleted` | İlk geçerli hareket içeren sürükleme bırakıldığında |
-| `CtaClicked` | CTA veya etkileşim eşiği sonrası mağaza dokunuşunda |
-| `PlayerWon` / `PlayerLost` | Bir bitiş koşulu üzerinden oturum tamamlandığında |
-| SDK level/end card olayları | İlgili bitiş/end card akışı kullanıldığında |
+| `TutorialStarted` | Session start when the tutorial is enabled |
+| `FirstMoveCompleted` | Release of the first gesture containing a valid move |
+| `CtaClicked` | CTA press or store press after the interaction threshold |
+| `PlayerWon` / `PlayerLost` | Session completion through an end condition |
+| SDK level/end-card events | The corresponding completion or end-card flow |
 
-Manuel showcase akışında win/lose olaylarının kendiliğinden oluşması beklenmez. Event sayısı, oyuncunun girdiği akışa bağlıdır.
+Win/loss events belong to the completion flows; the manual showcase does not emit them automatically.
 
-`LunaPlaygroundField` üzerinden aktif etkileşim süresi, hook, tutorial, CTA ve end card başlığı değiştirilebilir. Bunlar yeni level geometrisi üretmez. Yeni bir metin/dil varyantında font atlasının gereken karakterleri içerdiği ayrıca kontrol edilmelidir.
+`LunaPlaygroundField` exposes the interaction threshold, hook, tutorial, CTA, and end-card title. New text or language variants need the relevant characters in the exported font atlas.
 
-## Responsive UI ve çentik desteği
+## Responsive UI
 
-Canvas `1080 × 1920` referans çözünürlükle ölçeklenir. Beyaz başlık arka planı ekranın üstüne sıfır bağlanır; metin korunan içerik alanında kalır. CTA korunan alt kenara sabitlenir. Kamera da aynı alanın boyutlarını kullanır.
+The Canvas scales from a `1080 × 1920` reference resolution. The white header background reaches the top edge, while the text sits inside the protected content area. The CTA anchors to its bottom edge, and the camera uses the same area for board framing.
 
-**SDK’ye özel bulgu:** Playworks 7.2.0’ın üretilen JavaScript motorunda `Screen.safeArea`, çentiği çıkarmadan tüm viewport’u döndürür. Bu yüzden yalnızca Unity’nin safe-area sonucuna güvenmek, cihaz çerçevesi önizlemesinde başlığın kesilmesine neden olmuştu.
+Playworks 7.2.0 returns the full viewport from `Screen.safeArea`, including the preview's notch overlay. I added a fallback in `PlayableHud.GetSafeArea` after the header was clipped in the iPhone preview.
 
-`PlayableHud.GetSafeArea`, bildirilen alanı aşağıdaki minimum yerleşim paylarıyla kesiştirir:
-
-| Yön | Üst | Yanlar | Alt |
+| Orientation | Top | Sides | Bottom |
 | --- | ---: | ---: | ---: |
-| Dikey | %6,5 | %2 | %4 |
-| Yatay | %2 | %6 | %4 |
+| Portrait | 6.5% | 2% | 4% |
+| Landscape | 2% | 6% | 4% |
 
-Cihaz daha büyük bir güvenli alan bildirirse daha büyük pay korunur. Bu bir donanım çentik algılama sistemi değildir; SDK’nin bilgi vermediği duruma karşı responsive bir yerleşim payıdır. Hesap başlangıçta ve ekran/safe-area değişiminde yapılır.
+The fallback adds minimum layout margins and preserves larger insets when the device reports them. Layout is recalculated at startup and when the viewport or safe area changes.
 
 <p align="center">
-  <img src="docs/images/gameplay-landscape.png" width="800" alt="Yatay Unity yerleşim önizlemesinde başlık ve CTA güvenli alanın içinde">
+  <img src="docs/images/gameplay-landscape.png" width="800" alt="Landscape layout rendered in Unity">
 </p>
 
-<p align="center"><em>Yatay yerleşim simülasyonu. Gerçek cihaz testinin yerine geçmez.</em></p>
+## Optimization
 
-## Optimizasyon kararları
+Most of the savings came from preparing content ahead of time and reducing repeated work.
 
-| Karar | Neden? | Sınırı / karşılığı |
-| --- | --- | --- |
-| Sahneyi editörde üretmek | Runtime obje/mesh kurulumunu azaltmak | Config değişince yeniden Prepare gerekir |
-| Kamera ve HUD’u da hazırlamak | Açılışta UI/kamera GameObject üretmemek | Hazırlanmış sahne referansları korunmalı |
-| Şekil mesh’lerini paylaşmak | Aynı geometrinin asset verisini tekrar etmemek | Daha fazla blok yine daha fazla çizilen geometri demektir |
-| Board/duvar/çıkışları tek mesh yapmak | Sabit ortam renderer sayısını azaltmak | Seçili varyant için yeniden hazırlanır |
-| Vertex renklerini `Color32` tutmak | Renk başına 16 yerine 4 byte ham veri | Tüm build dörtte bire düşmez |
-| Aynı konum/renkteki vertex’leri birleştirmek | Gereksiz vertex kopyalarını kaldırmak | Renk sınırları korunmalı |
-| Sıfır alanlı üçgenleri kaldırmak | Görünmeyen geometriyi çizim verisinden çıkarmak | Editör aşamasında uygulanır |
-| Hareketsiz blokları konum döngüsüne almamak | Her kare bütün Transform’lara yazmamak | Yalnızca hareket kuyruğu ve seçim animasyonu ilerler |
-| Hazır seçim görünümü ve efekt havuzu | Seçim/çıkış sırasında Instantiate/Destroy yapmamak | Aynı anda tek çıkış efekti akışı kullanılır |
-| Grid ile çarpışma kontrolü | Collider/Rigidbody ve fizik simülasyonunu gerektirmemek | Fiziksel etkileşim hedeflenmez |
-| Animasyonları merkezi ilerletmek | Blok başına Update/Animator eklememek | Yeni görsel davranışlar ortak tick akışına bağlanır |
-| Skybox/yansıma içeriğini kaldırmak | Unlit görünümde kullanılmayan cubemap’i export etmemek | Gerçek aydınlatma eklenirse karar tekrar değerlendirilir |
-| Authoring yardımcılarını editöre ayırmak | Oyuncuda kullanılmayan doğrulama kodunu taşımamak | Runtime veri modeli ayrı kalır |
+| Change | Reason |
+| --- | --- |
+| Prepare the board, blocks, camera, and HUD in the editor | Remove scene construction from startup |
+| Cache and share shape meshes | Store repeated geometry once |
+| Combine the floor, walls, and exits | Reduce environment renderer count |
+| Store vertex colors as `Color32` | Use 4 bytes per color instead of 16 |
+| Weld matching position/color vertices | Remove duplicate vertex data while retaining color boundaries |
+| Remove zero-area triangles | Drop geometry that contributes no visible surface |
+| Queue moving blocks | Avoid position writes to idle blocks |
+| Reuse the selection renderer and fragment pool | Avoid Instantiate/Destroy during interaction |
+| Resolve collisions through grid occupancy | Keep Rigidbody and Collider simulation out of gameplay |
+| Tick animations centrally | Avoid per-block Update loops and Animator components |
+| Remove the unused skybox and reflection content | Stop exporting the default cubemap |
+| Exclude authoring helpers from player compilation | Keep editor-only validation out of the runtime |
 
-Oyun sırasında nesne üretmemek, uygulamanın hiç bellek ayırmadığı anlamına gelmez. Başlangıçta model dizileri, hareket kuyruğu ve property block’lar hazırlanır. Tarayıcı motorunun kendi tahsisleri de vardır.
+Startup still allocates the model arrays, movement queue, and property blocks. The reuse applies to gameplay objects and effects after that setup.
 
-### Geometri temizliğinin sonucu
+### Geometry results
 
-80 blokluk varyantın Unity ölçümleri:
+For the 80-block level:
 
-| Ölçüm | Temizlik öncesi | Sonrası | Azalma |
+| Metric | Before compaction | After | Reduction |
 | --- | ---: | ---: | ---: |
-| Paylaşılan blok mesh’i | 596 vertex | 298 vertex | %50 |
-| Görünür board + bloklar | 54.386 vertex | 30.298 vertex | %44,3 |
-| Görünür üçgenler | 41.784 | 29.032 | %30,5 |
+| Shared block mesh | 596 vertices | 298 vertices | 50% |
+| Visible board and blocks | 54,386 vertices | 30,298 vertices | 44.3% |
+| Visible triangles | 41,784 | 29,032 | 30.5% |
 
-Son görünümdeki efekt havuzu 12 parçadır. Yukarıdaki idle geometri değerlerine gizli parçalar ve UI dahil değildir. Playworks toplamları bu nedenle farklı olabilir.
+These counts exclude UI and hidden fragments. A comparison of **257,640 board pixels** before and after compaction had **zero RGB difference**.
 
-Eski ve yeni board görüntülerindeki **257.640 piksel** karşılaştırıldı: maksimum RGB farkı **0/255**. Bu ölçüm, test edilen görünümde geometri temizliğinin görüntüyü değiştirmediğini gösterir.
+## Performance and build size
 
-## Performans ve build boyutu
+### Playworks preview
 
-### Playworks gözlemleri
+![Playworks performance panel showing 12% CPU, 126 MB RAM, approximately 2 ms frame time, and 16 draw calls](docs/images/playworks-performance.png)
 
-![Playworks performans paneli: CPU yüzde 12, RAM 126 MB, yaklaşık 2 ms kare süresi, 16 draw call](docs/images/playworks-performance.png)
+Recorded with the 80-block level:
 
-Bu ekran görüntüsü kullanıcı tarafından Playworks önizlemesinden alınmıştır. Son gözlemler:
-
-| Ölçüm | Gözlem |
+| Metric | Result |
 | --- | --- |
-| CPU | Ekran görüntüsünde %12 |
-| Ortalama kare süresi | Panelde yaklaşık 2 ms |
-| RAM | Kullanıcı gözleminde çoğunlukla 90–130 MB; 130 MB nadir |
-| CTA anındaki RAM | Kullanıcı gözleminde yaklaşık 96 MB’a düşüyor |
-| Bellek eğilimi | Sürekli yükselen birikme gözlenmedi; oyun stabil bildirildi |
-| Draw call | Ekran görüntüsünde 16 |
-| Vertex / üçgen | Ekran görüntüsünde 30.886 / 29.596 |
-| Material switch / shadow caster | 3 / 0 |
+| CPU | 12% in the captured frame |
+| Average frame time | Approximately 2 ms in the panel |
+| RAM | 90–130 MB during play; peaks near 130 MB are rare |
+| RAM around the CTA press | Approximately 96 MB |
+| Memory over time | Fluctuates without a sustained upward trend |
+| Draw calls | 16 |
+| Vertices / triangles | 30,886 / 29,596 |
+| Material switches / shadow casters | 3 / 0 |
 
-Bu değerler belirli bir önizleme ve oynanış gözlemidir; tüm telefonlar için FPS garantisi değildir. RAM’de kısa dalgalanmalar gözlenmiş olsa da bunların nedeni heap kaydıyla kesinleştirilmedi. Sabit birikme ve takılma bildirilmediği için bu aşamada ek bir GC optimizasyon turu açılmadı.
+### Build size
 
-Panelde rendering’in yaklaşık %89 olması, tek başına rendering’in kötü olduğu anlamına gelmez: toplam ölçülen işin dağılımıdır. Frame time, gerçek cihaz davranışı ve bellek eğilimi birlikte değerlendirilmelidir. Physics/Particles kategorilerinin görünmesi de projede Rigidbody veya ParticleSystem kullanıldığına tek başına kanıt değildir.
+Use **Size Breakdown → Build & Estimate size** in Playworks for an asset breakdown. Check **Download / Publish** for the final ad-network export.
 
-### Build boyutu nereden okunur?
+![ironSource asset breakdown showing a total of 671.18 KB](docs/images/build-size-ironsource.png)
 
-Unity Playworks penceresinde **Size Breakdown → Build & Estimate size** ile seçilen hedef için döküm alınır. Son reklam ağı çıktısı **Download / Publish** ekranında kontrol edilir. Playground, geliştirme çıktısı, upload ZIP’i ve ağa özel paket aynı boyut ölçümü değildir.
-
-![ironSource boyut dökümü: toplam 671,18 KB; scripts, iki font ve dört mesh](docs/images/build-size-ironsource.png)
-
-| Çıktı / kaynak | Ölçüm |
+| Output | Recorded size |
 | --- | --- |
-| Kullanıcının ironSource boyut dökümü | 671,18 KB |
-| ironSource scripts / fonts / meshes | 432,79 KB / 63,96 KB / 22,96 KB |
-| Son yerel Playground ZIP’i | 1.458.376 byte; yaklaşık 1,39 MiB |
+| ironSource export estimate | 671.18 KB |
+| ironSource scripts | 432.79 KB |
+| ironSource fonts | 63.96 KB |
+| ironSource meshes | 22.96 KB |
+| Local Playground ZIP | 1,458,376 bytes, approximately 1.39 MiB |
 
-ironSource ekran görüntüsü ile son yerel ZIP aynı hedefin aynı çıktısı değildir. Ağ SDK’sı, paketleme, gömme ve sıkıştırma tercihleri fark yaratır. Küçük ZIP ayrıca düşük RAM kullanımının doğrudan ölçümü değildir; sıkıştırılmış veri runtime’da açılır.
+The ironSource estimate and Playground ZIP are separate export targets. Their packaging, SDK code, and compression differ.
 
-Export kontrolünde seçili varyanta ait **4 ScriptableObject, 4 mesh, 2 font, 0 cubemap** görülmüştür. Board için kaynak texture kullanılmaz; font atlasları SDK tarafından oluşturulur. Diğer level/theme asset’lerini projede tutmak, gözlenen export’ta hepsinin build’e girdiği anlamına gelmez.
+The asset export contains **4 ScriptableObjects, 4 meshes, 2 fonts, and no cubemap**. It includes the selected variant and its dependencies. Board surfaces have no source textures; the SDK generates atlases for the fonts.
 
-## Doğrulama ve testler
+## Tests
 
-### Core testleri
+### Grid rules
 
 ```sh
 sh Tests/run_core_tests.sh
 ```
 
-Script Mono ve Unity managed assembly’lerini kullanır; varsayılan yollar macOS’taki Unity 6000.0.72f1 kurulumuna göredir. Farklı kurulumlar için script’teki `UNITY_MANAGED_PATH`, `MONO_BIN` ve `UNITY_FACADE_PATH` değişkenleri ayarlanabilir.
+The script uses Mono and Unity's managed assemblies. Its default paths match Unity 6000.0.72f1 on macOS. Set `UNITY_MANAGED_PATH`, `MONO_BIN`, and `UNITY_FACADE_PATH` for another installation.
 
-14 test grubu; doluluk güncellemesi, geçersiz hareketlerde state’in korunması, çapraz/sıçrama reddi, çok hücreli hareket, salt okunur önizleme, dört kenardan çıkış, yanlış renk/genişlik, engeller, hareket modları, veri kopyalama ve düzensiz şekilleri kapsar. Ek olarak **5.000 rastgele hareket** sırasında doluluk tutarlılığı kontrol edilir.
+The 14 test groups cover occupancy updates, rejected moves, cardinal movement, multi-cell shapes, read-only previews, all four exit directions, color and opening checks, obstacles, movement modes, copied level data, and irregular shapes. Another **5,000 random moves** check occupancy consistency.
 
-### Unity doğrulamaları
+### Scene and runtime checks
 
-[`PlayableSceneBuilder.VerifyProject`](Assets/_Project/Scripts/Editor/PlayableSceneBuilder.cs) varyant doğrulama, sahne rebuild’i, paylaşılan kalıcı mesh’ler, Color32 verisi, HUD referansları ve shader import kontrolünü içerir. Bu işlem varsayılan stres varyantını sahneye hazırlar; izole bir doğrulama kopyasında çalıştırılması uygundur.
+[`PlayableSceneBuilder.VerifyProject`](Assets/_Project/Scripts/Editor/PlayableSceneBuilder.cs) checks configs, scene rebuilds, persistent shared meshes, Color32 storage, HUD references, and shader imports. It prepares the default stress variant.
 
-Ek batch yardımcıları `Tests` altında tutulur; üretim `Assets` ağacına kendiliğinden dahil olmazlar. Çalıştırmak için izole proje kopyasının `Assets/_Project/Scripts/Editor` klasörüne kopyalanır ve ilgili statik `Run` metodu Unity batch mode’dan çağrılır.
+Batch helpers live outside `Assets`. Copy them into an isolated project's `Assets/_Project/Scripts/Editor` folder and call their static `Run` methods in Unity batch mode.
 
-| Yardımcı | Kapsam |
+| Helper | Checks |
 | --- | --- |
-| [`StressSceneChecks`](Tests/StressSceneChecks.cs) | 80 bloğun çözülmesi, ortak şekil, hareket kuyruğu, tekrar hedef gönderimi ve tahsis ölçümleri |
-| [`BurstVisibilityChecks`](Tests/BurstVisibilityChecks.cs) | Hazır renderer havuzu, büyütülmüş parçalar, süre ve efektin kapanması |
-| [`ResponsiveLayoutChecks`](Tests/ResponsiveLayoutChecks.cs) | Beş ekran/yön oranı, tam-viewport safeArea fallback’i, gerçek inset’lerin korunması, başlık/CTA sınırları |
+| [`StressSceneChecks`](Tests/StressSceneChecks.cs) | Solves all 80 blocks; checks mesh sharing, movement queues, repeated targets, and allocations |
+| [`BurstVisibilityChecks`](Tests/BurstVisibilityChecks.cs) | Checks prepared renderers, fragment size, lifetime, and cleanup |
+| [`ResponsiveLayoutChecks`](Tests/ResponsiveLayoutChecks.cs) | Checks five screen/orientation sizes, full-viewport safe-area fallback, larger reported insets, and title/CTA bounds |
 
-Başlangıç hazırlığı ve warm-up sonrasında Unity’de ölçülen sınırlı döngüler:
+Managed allocations measured in Unity after initialization and warm-up:
 
-| Döngü | Ölçülen managed allocation |
+| Loop | Allocation |
 | --- | ---: |
-| 10.000 idle hareket tick’i | 0 byte |
-| 10.000 hareket/ipucu önizlemesi | 0 byte |
-| 80 blok aynı anda hareket ederken 1.000 tick | 0 byte |
+| 10,000 idle movement ticks | 0 bytes |
+| 10,000 move/hint previews | 0 bytes |
+| 1,000 ticks with all 80 blocks moving | 0 bytes |
 
-**Bu sonuç tüm oyunun veya Playworks JavaScript motorunun sıfır tahsis yaptığı anlamına gelmez.** Ölçüm belirli çağrıları, Unity ortamını ve ölçülen thread’i kapsar.
+These measurements cover the listed Unity calls on the measured thread. Browser allocations are separate.
 
-### Paket ve cihaz kontrolü
+The full Playworks build passes compilation, the health report is empty, and ZIP integrity checks pass. Before exporting a new creative, check colors, exits, effects, orientation changes, pause/resume, and store clicks.
 
-Yerel tam Playworks derlemesi, boş health raporu ve ZIP CRC kontrolü geçmiştir. Akış, seçim/bırakma, yeniden kullanılan efekt ve 10 aktif saniye koşulu ayrıca Unity’de kontrol edilmiştir.
+Detailed measurements: [`Tests/StressAudit.md`](Tests/StressAudit.md).
 
-Yeni bir kreatif hazırlanırken son ağa özel build’de şu kontroller tekrarlanır: renk/çıkış eşleşmesi, çentik ve yön değişimi, parçalanmanın görünürlüğü, pause/resume, CTA ve aktif etkileşim sonrası mağaza çağrısı. Native testler gerçek mağaza yönlendirmesi veya bütün cihazların görünümü için doğrulama yerine geçmez.
+## Extending the project
 
-Ölçümlerin ayrıntıları ve geçmiş karşılaştırmalar: [`Tests/StressAudit.md`](Tests/StressAudit.md).
-
-## Yeni özellik ekleme
-
-| İhtiyaç | Başlangıç noktası |
+| Change | Start here |
 | --- | --- |
-| Yeni board düzeni / şekil | Yeni `LevelConfig`; gerekli hareket kuralı mevcutsa runtime kodu değişmez |
-| Yeni renk/görünüm | `VisualThemeConfig`; geometrik detay için editör mesh builder’ları |
-| Yeni reklam metni / süre / koşul | `AdFlowConfig` ve gerektiğinde `AdSession` |
-| Yeni oynanış kuralı | Önce `GridBoard` ve anlamlı core testleri, sonra görünüm bağlantısı |
-| Yeni görsel efekt | Editörde hazırlanmış görünüm ve merkezi tick akışı |
-| SDK’ye özgü yeni olay | `PlayablePlatform` |
-| Daha kullanışlı level aracı | `PlayableFrameworkWindow` ve editör yardımcıları |
+| New board or block shapes | `LevelConfig` |
+| New palette or surface style | `VisualThemeConfig` and the editor mesh builders |
+| New text, timing, or end condition | `AdFlowConfig` and `AdSession` |
+| New movement or exit rule | `GridBoard`, its core tests, then the view |
+| New visual effect | Prepared scene objects and the central tick flow |
+| New SDK event | `PlayablePlatform` |
+| Better level editing controls | `PlayableFrameworkWindow` |
 
-Bir özellik eklerken önce editörde hazırlanabilecek kısmı ayır; sonra runtime maliyetini ölç. Runtime üretimini yasaklamak kendi başına optimizasyon kanıtı değildir. Buradaki içerik tek seçili sahneyle sunulduğu için önceden hazırlamak uygundur; farklı bir ihtiyaçta karar ölçümle değişebilir.
+The current scope covers grid movement and color exits. Automatic puzzle generation, a general solver, runtime level streaming, and lock/key/chain mechanics are not implemented.
 
-Mevcut kapsam; otomatik level üretici, genel çözülebilirlik solver’ı, runtime level streaming, kilit/anahtar/zincir gibi Color Block Jam’in bütün mekanikleri veya her cihaz için otomatik çentik tespiti içermez.
-
-## Klasör yapısı ve sorun giderme
+## Project structure
 
 ```text
 Assets/_Project/
-├── Configs/                 Level, tema, akış ve varyant asset’leri
-├── Fonts/                   Lilita One ve OFL lisansı
-├── Generated/Meshes/        Editörde üretilmiş kalıcı mesh’ler
-├── Materials/               Ortak vertex-color ve su materyalleri
-├── Scenes/                  Hazırlanmış playable sahnesi
+├── Configs/                 Levels, themes, flows, and variants
+├── Fonts/                   Lilita One and its OFL license
+├── Generated/Meshes/        Persistent geometry created in the editor
+├── Materials/               Shared vertex-color and water materials
+├── Scenes/                  Prepared playable scene
 ├── Scripts/
-│   ├── Data/                Config ve veri tanımları
-│   ├── Editor/              Level aracı, builder’lar ve validator
-│   └── Runtime/             Oyun modeli, akış, görünüm ve SDK sınırı
-└── Shaders/                 Vertex renkleri ve hareketli su
-Tests/                      Core testleri, batch yardımcıları ve ölçüm raporu
-docs/images/                README görselleri; Unity Assets dışında
-Builds/Stress/              Yerel doğrulanmış paketler; Git tarafından ignore edilir
+│   ├── Data/                Configs and data types
+│   ├── Editor/              Framework window, builders, and validation
+│   └── Runtime/             Grid model, flow, views, and SDK adapter
+└── Shaders/                 Vertex-color shading and moving water
+Tests/                      Core tests, batch checks, and audit notes
+docs/images/                README screenshots
+Builds/Stress/              Local export packages, ignored by Git
 ```
 
-README görselleri ve doğrulama yardımcıları üretim `Assets` klasörü dışında tutulur; dokümantasyon eklemek playable’a yeni texture asset’leri eklemez. `Builds` klasörünün Git’te bulunmaması normaldir; README görselleri ayrıca versiyonlanır.
+Documentation images and test helpers stay outside `Assets`, so they are not imported into the playable. Local build packages are ignored by Git; the README screenshots are tracked separately.
 
-| Durum | Kontrol |
+## Troubleshooting
+
+| Issue | Check |
 | --- | --- |
-| SDK `package.json` bulunamıyor | SDK çıkarılmış mı, klasör taşınmış mı? Framework üzerinden `scripts/package.json` dosyasını yeniden bağla |
-| Config değişti ama sahne eski | Doğru Active Variant seçili mi? Yeniden **Prepare playable scene** çalıştır |
-| Bir config değişikliği başka varyantı etkiledi | Aynı SO referansını paylaşıyorlar mı? Bağımsız kullanım için SO’yu çoğalt |
-| Blok çıkıştan çıkmıyor | Renk, kenar, start/length ve şeklin tek açıklığa tamamen sığmasını kontrol et |
-| Yeni düzen validate olmuyor | Benzersiz ID’ler, bağlı şekil, üst üste gelme, pasif hücreler ve çıkış çakışmalarını kontrol et |
-| Build’de renkler tek renge döndü | Tint uygulamasında ayrı property block ve açık renk dönüşümü korunuyor mu? Sahneyi/build’i yenile |
-| Başlık çentik altında kaldı | Güncel `GetSafeArea` kodu ve hazırlanmış HUD sahnesi export edilmiş mi? Eski kreatif/cache kullanılıyor mu? |
-| Efekt Unity’de var, build’de görünmüyor | Güncel 12 parçalık renderer havuzunu ve son paketi kontrol et; native görünürlük testini tek başına yeterli sayma |
-| RAM kısa süre yükseldi | Zaman içindeki eğilimi ve takılmayı izle; sürekli artış varsa browser heap kaydıyla araştır |
+| SDK `package.json` is missing | Reconnect the extracted SDK's `scripts/package.json` through the Framework window |
+| The scene still shows the old level | Select the right variant and run **Prepare playable scene** |
+| Editing one variant changes another | Check for shared config references; duplicate the config if it should be independent |
+| A block will not exit | Check the color, side, span, and whether the whole shape fits one opening |
+| Validation fails | Check IDs, connected shapes, overlap, cell overrides, and gate spans |
+| Blocks have the same color in the build | Keep separate property blocks and explicit color conversion; prepare and export again |
+| The header is under the notch | Check that the current safe-area code and prepared HUD are in the exported creative |
+| Exit fragments are missing | Check the prepared 12-renderer pool and test the latest export |
+| RAM keeps increasing | Capture a browser heap profile and inspect retained allocations |
 
-## Referanslar ve font lisansı
+## References and credits
 
 - [Playworks: Asset Size Breakdown](https://docs.lunalabs.io/docs/playable/optimise-your-builds/asset-size-breakdown/)
 - [Playworks: Performance Indicator](https://docs.lunalabs.io/docs/playable/optimise-your-builds/performance-indicator/)
 - [Playworks: JavaScript Profiler](https://docs.lunalabs.io/docs/playable/code/plugin-in-browser/profiler-js/)
 - [Playworks: UI cropped off screen](https://docs.lunalabs.io/docs/playable/common-issues/ui/ui-cropped-off/)
-- [Lilita One font lisansı — SIL OFL 1.1](Assets/_Project/Fonts/OFL.txt)
+- [Lilita One license — SIL OFL 1.1](Assets/_Project/Fonts/OFL.txt)
 
-Lilita One, Juan Montoreano tarafından tasarlanmıştır; lisans metni fontla birlikte korunur. Bu proje, Rollic veya Playable Factory ile bağlantılı olmayan bağımsız bir portföy çalışmasıdır. Oyun ve reklam referansları tasarım incelemesi için kullanılmış; board/blok görselleri projedeki geometri üretimiyle hazırlanmıştır.
+Lilita One was designed by Juan Montoreano. Its license is included with the font.
+
+Independent portfolio project inspired by Color Block Jam. Not affiliated with Rollic or Playable Factory. Board and block visuals are generated by the project's mesh builders.
