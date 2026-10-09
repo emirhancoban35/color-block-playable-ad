@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   variantId: Variant_Showcase
   levelConfig: {fileID: 11400000, guid: 67c0a60d73784894bb4b1f9a6760423f, type: 2}
-  visualTheme: {fileID: 11400000, guid: 75f311b9890750b499a7f79f51f35e11, type: 2}
+  visualTheme: {fileID: 11400000, guid: e9bbc098d52d4d419318c457ea2a1e98, type: 2}
   adFlowConfig: {fileID: 11400000, guid: 956cb7b682754d95a5e2d71d40333aaf, type: 2}
-  moveSpeed: 22
+  moveSpeed: 16
   exitDuration: 0.24

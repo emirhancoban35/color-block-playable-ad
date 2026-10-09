@@ -32,7 +32,7 @@ namespace Playable.Editor
 
             FlatMeshBuilder background = new FlatMeshBuilder();
             background.RoundedRect(new Vector2((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f),
-                board.Width + 0.7f, board.Height + 0.7f, 0.3f, 0.5f, theme.borderColor);
+                board.Width + 0.7f, board.Height + 0.7f, 0.3f, 0.5f, theme.boardColor * 0.8f);
             for (int y = 0; y < board.Height; y++)
                 for (int x = 0; x < board.Width; x++)
                 {
@@ -155,7 +155,7 @@ namespace Playable.Editor
             List<Vector2Int> cells = new List<Vector2Int>();
             for (int i = 0; i < board.CellCount(block); i++) cells.Add(board.LocalCell(block, i));
             cells.Sort((a, b) => a.y == b.y ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
-            StringBuilder key = new StringBuilder();
+            StringBuilder key = new StringBuilder("2;");
             foreach (Vector2Int cell in cells) key.Append(cell.x).Append(',').Append(cell.y).Append(';');
             key.Append(theme.cellGap.ToString("R", CultureInfo.InvariantCulture)).Append(';')
                 .Append(theme.cornerRadius.ToString("R", CultureInfo.InvariantCulture)).Append(';').Append(theme.showStuds);
@@ -190,7 +190,11 @@ namespace Playable.Editor
             string path = MeshFolder + "/Board.asset";
             Mesh existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (existing == null) { AssetDatabase.CreateAsset(mesh, path); return mesh; }
-            EditorUtility.CopySerialized(mesh, existing);
+            existing.Clear();
+            existing.vertices = mesh.vertices;
+            existing.colors32 = mesh.colors32;
+            existing.triangles = mesh.triangles;
+            existing.RecalculateBounds();
             EditorUtility.SetDirty(existing);
             Object.DestroyImmediate(mesh);
             return existing;

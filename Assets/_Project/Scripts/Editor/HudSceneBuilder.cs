@@ -56,6 +56,9 @@ namespace Playable.Editor
             instruction.gameObject.SetActive(false);
             PlayableHud hud = root.AddComponent<PlayableHud>();
             ctaText.fontStyle = FontStyle.Bold;
+            Outline lettering = ctaText.gameObject.AddComponent<Outline>();
+            lettering.effectColor = new Color(0.04f, 0.08f, 0.12f);
+            lettering.effectDistance = new Vector2(2f, -2f);
             hud.Configure(safeRoot, progress, tutorial, endCard, endTitle, subtitle, cta, ctaText, title, instruction);
             return hud;
         }

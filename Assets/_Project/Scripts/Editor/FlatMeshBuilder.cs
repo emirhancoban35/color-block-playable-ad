@@ -14,11 +14,11 @@ namespace Playable.Editor
             bool joinLeft = false, bool joinRight = false, bool joinBottom = false, bool joinTop = false, bool stud = false, float depth = 0f)
         {
             Vector2[] outer = Outline(left, right, bottom, top, radius, joinLeft, joinRight, joinBottom, joinTop);
-            Vector2[] inner = Outline(left + (joinLeft ? 0f : 0.045f), right - (joinRight ? 0f : 0.045f),
-                bottom + (joinBottom ? 0f : 0.045f), top - (joinTop ? 0f : 0.045f), Mathf.Max(0f, radius - 0.035f),
+            Vector2[] inner = Outline(left + (joinLeft ? 0f : 0.065f), right - (joinRight ? 0f : 0.065f),
+                bottom + (joinBottom ? 0f : 0.065f), top - (joinTop ? 0f : 0.065f), Mathf.Max(0f, radius - 0.05f),
                 joinLeft, joinRight, joinBottom, joinTop);
-            Fill(outer, center + new Vector2(0f, -0.045f), depth + 0.025f, Shade(color, 0.47f), false);
-            Fill(inner, center, depth - 0.01f, color, true);
+            Fill(outer, center + new Vector2(0f, -0.065f), depth + 0.025f, Shade(color, 0.47f), false);
+            Fill(inner, center, depth - 0.01f, color, !stud);
             for (int i = 0; i < outer.Length; i++)
             {
                 int next = (i + 1) % outer.Length;
@@ -27,7 +27,7 @@ namespace Playable.Editor
             }
             if (stud)
             {
-                Disc(center + new Vector2(0f, -0.027f), 0.255f, -depth + 0.025f, Shade(color, 0.6f));
+                Disc(center + new Vector2(0f, -0.027f), 0.255f, depth - 0.02f, Shade(color, 0.6f));
                 Disc(center + new Vector2(0f, 0.018f), 0.24f, depth - 0.03f, Shade(color, 1.16f));
                 Disc(center, 0.222f, depth - 0.035f, color);
             }

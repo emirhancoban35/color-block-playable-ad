@@ -66,7 +66,7 @@ namespace Playable.View
             visualTime += dt;
             if (visualTime - dt < 0.35f) hook.transform.localScale = Vector3.one * Mathf.Lerp(0.94f, 1f, Mathf.Min(1f, visualTime / 0.35f));
             if (instruction.gameObject.activeSelf) instruction.localScale = Vector3.one * (idle ? 1f + Mathf.Sin(visualTime * 3f) * 0.015f : 1f);
-            if (cta.gameObject.activeSelf) cta.localScale = Vector3.one * (idle ? 1f + Mathf.Sin(visualTime * 3.5f) * 0.025f : 1f);
+            if (cta.gameObject.activeSelf) cta.localScale = Vector3.one * (1f + Mathf.Sin(visualTime * 3.5f) * 0.04f);
             if (resultTime >= 0f && resultTime < 0.3f)
             {
                 resultTime += dt;

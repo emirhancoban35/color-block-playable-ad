@@ -10,7 +10,7 @@ namespace Data.Theme
         public Color boardColor = new Color(0.39f, 0.46f, 0.62f);
         public Color borderColor = new Color(0.19f, 0.23f, 0.34f);
         [Range(0.02f, 0.15f)] public float cellGap = 0.06f;
-        [Range(0.01f, 0.2f)] public float cornerRadius = 0.2f;
+        [Range(0.01f, 0.28f)] public float cornerRadius = 0.2f;
         public bool showStuds = true;
         [Header("One shared material; color comes from mesh vertices")]
         public Material sharedMaterial;

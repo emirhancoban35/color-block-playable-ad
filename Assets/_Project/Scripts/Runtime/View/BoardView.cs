@@ -12,7 +12,8 @@ namespace Playable.View
         [SerializeField] private MeshFilter selectionOutline;
         [SerializeField] private ExitBurst exitBurst;
         private MaterialPropertyBlock outlineProperties;
-        private int selectedBlock = -1;
+        private int selectedBlock = -1, releasingBlock = -1;
+        private bool hintOnly;
         private Vector3 outlineCenter;
         private Vector3[] targets;
         private int[] moving;
@@ -48,7 +49,8 @@ namespace Playable.View
         {
             ClearSelection();
             selectedBlock = index;
-            blocks[index].localScale = Vector3.one * 1.025f;
+            if (releasingBlock == index) releasingBlock = -1;
+            hintOnly = false;
             Mesh mesh = blocks[index].GetComponent<MeshFilter>().sharedMesh;
             selectionOutline.sharedMesh = mesh;
             outlineCenter = mesh.bounds.center;
@@ -62,7 +64,7 @@ namespace Playable.View
         public void ShowHint(int index)
         {
             SelectBlock(index);
-            blocks[index].localScale = Vector3.one;
+            hintOnly = true;
         }
 
         public void PulseHint(float time)
@@ -75,7 +77,8 @@ namespace Playable.View
         public void ClearSelection()
         {
             if (selectedBlock < 0) return;
-            blocks[selectedBlock].localScale = Vector3.one;
+            if (releasingBlock >= 0) blocks[releasingBlock].localScale = Vector3.one;
+            releasingBlock = selectedBlock;
             selectionOutline.gameObject.SetActive(false);
             selectedBlock = -1;
         }
@@ -101,6 +104,15 @@ namespace Playable.View
 
         public void TickMotion(float blend)
         {
+            if (selectedBlock >= 0 && !hintOnly)
+                blocks[selectedBlock].localScale = Vector3.Lerp(blocks[selectedBlock].localScale, Vector3.one * 1.035f, blend);
+            if (releasingBlock >= 0)
+            {
+                Transform block = blocks[releasingBlock];
+                block.localScale = Vector3.Lerp(block.localScale, Vector3.one, blend);
+                if ((block.localScale - Vector3.one).sqrMagnitude < 0.000001f)
+                { block.localScale = Vector3.one; releasingBlock = -1; }
+            }
             for (int i = movingCount - 1; i >= 0; i--)
             {
                 int index = moving[i];
