@@ -44,6 +44,20 @@ namespace Playable.Editor
                 radius, false, false, false, false), center, z, color, false);
         }
 
+        public void RoundedCorner(Vector2 center, float outerRadius, float innerRadius, int corner, float z, Color color)
+        {
+            const int segments = 6;
+            for (int i = 0; i < segments; i++)
+            {
+                float a = (corner * 90f + i * 90f / segments) * Mathf.Deg2Rad;
+                float b = (corner * 90f + (i + 1) * 90f / segments) * Mathf.Deg2Rad;
+                Vector2 from = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
+                Vector2 to = new Vector2(Mathf.Cos(b), Mathf.Sin(b));
+                Quad(center + from * outerRadius, center + to * outerRadius,
+                    center + to * innerRadius, center + from * innerRadius, z, color);
+            }
+        }
+
         public void Arrow(Vector2 center, Vector2 direction, Color color)
         {
             Vector2 side = new Vector2(-direction.y, direction.x) * 0.13f;

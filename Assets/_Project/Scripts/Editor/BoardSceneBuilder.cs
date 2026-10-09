@@ -38,7 +38,14 @@ namespace Playable.Editor
                 {
                     Vector2Int cell = new Vector2Int(x, y);
                     if (!board.IsActive(cell)) continue;
-                    background.Tile(cell, -0.48f, 0.48f, -0.48f, 0.48f, 0.08f, board.IsBlocked(cell) ? theme.borderColor : theme.boardColor);
+                    if (board.IsBlocked(cell))
+                        Wall(background, cell, 0.96f, 0.96f, theme.borderColor);
+                    else
+                    {
+                        background.RoundedRect(cell, 0.96f, 0.96f, 0.08f, 0f, theme.boardColor * 0.8f);
+                        background.RoundedRect((Vector2)cell + new Vector2(0f, -0.012f),
+                            0.94f, 0.93f, 0.07f, -0.01f, theme.boardColor);
+                    }
                 }
             BuildWalls(background, level, theme.borderColor);
             foreach (var gate in level.exits)
@@ -89,8 +96,8 @@ namespace Playable.Editor
                     if (open[i]) { i++; continue; }
                     int start = i++;
                     while (i < length && !open[i]) i++;
-                    float from = start - 0.5f - (start == 0 ? 0.35f : 0f);
-                    float to = i - 0.5f + (i == length ? 0.35f : 0f);
+                    float from = start - 0.5f - (start == 0 ? 0.12f : 0f);
+                    float to = i - 0.5f + (i == length ? 0.12f : 0f);
                     float center = (from + to) * 0.5f;
                     Vector2 position = horizontal
                         ? new Vector2(center, direction.y > 0 ? level.height - 0.3f : -0.7f)
@@ -101,8 +108,15 @@ namespace Playable.Editor
             }
             for (int y = 0; y < 2; y++)
                 for (int x = 0; x < 2; x++)
-                    Wall(mesh, new Vector2(x == 0 ? -0.7f : level.width - 0.3f,
-                        y == 0 ? -0.7f : level.height - 0.3f), 0.34f, 0.34f, color);
+                {
+                    Vector2 center = new Vector2(x == 0 ? -0.49f : level.width - 0.51f,
+                        y == 0 ? -0.49f : level.height - 0.51f);
+                    int corner = y == 0 ? (x == 0 ? 2 : 3) : (x == 0 ? 1 : 0);
+                    mesh.RoundedCorner(center + new Vector2(0f, -0.035f), 0.38f, 0.04f, corner, 0.06f, color * 0.65f);
+                    mesh.RoundedCorner(center, 0.38f, 0.04f, corner, -0.02f, color);
+                    mesh.RoundedCorner(center + new Vector2(0f, 0.015f), 0.35f, 0.07f,
+                        corner, -0.03f, Color.Lerp(color, Color.white, 0.12f));
+                }
         }
 
         private static void Wall(FlatMeshBuilder mesh, Vector2 center, float width, float height, Color color)
