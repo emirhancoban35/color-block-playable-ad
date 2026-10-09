@@ -131,7 +131,7 @@ Movement modes:
 - `UpOnly` / `DownOnly` / `LeftOnly` / `RightOnly`
 - `Locked`
 
-Movement is resolved as horizontal or vertical grid steps, including for `Free` blocks.
+Movement is resolved as horizontal or vertical grid steps, including for `Free` blocks. Direction-restricted blocks show white arrows: a single arrow for a one-way block, or a double arrow for a horizontal/vertical block. `Free` and `Locked` blocks have no arrow. Change a block's `movementMode` in the level config, then prepare the scene again to update its symbol.
 
 ### Exits
 
@@ -177,7 +177,7 @@ These three levels use the same runtime as the 80-block stress scene. Each has i
 
 [`Variant_Heart`](Assets/_Project/Configs/Variant_Heart.asset) uses inactive cells to cut a heart out of a 10 × 10 grid. The floor and pink frame follow that silhouette, including the notch between the two lobes. Twelve blocks share seven exits across all four sides; clearing the two central red blocks opens a route for the red blocks on either side.
 
-This is an example of changing the board silhouette without adding a new movement rule. The frame is baked into the board mesh when the scene is prepared. All twelve blocks must leave to finish the level.
+This is an example of changing the board silhouette without adding a new movement rule. The frame is baked into the board mesh when the scene is prepared. All twelve blocks must leave to finish the level. The bottom red block moves down only, the red block above it moves vertically, and the inner blue block moves horizontally. White arrows show these restrictions.
 
 ### Shape Lab
 
@@ -261,7 +261,7 @@ Board and block surfaces use vertex colors rather than texture assets. Their sha
 
 ### Shared shapes and colors
 
-Shape meshes are generated with white shading. Each renderer applies its palette tint, allowing different-colored blocks to share the same mesh.
+Shape meshes are generated with white shading. Each renderer applies its palette tint, allowing different-colored blocks to share the same mesh. Direction arrows are baked into that mesh and use a vertex-color alpha flag to stay white under the tint. A single arrow adds three triangles, a double arrow four; neither adds a renderer, material, or runtime update. Restricted shapes include their movement mode in the mesh cache key so different arrow directions cannot share the wrong geometry.
 
 Board and frame colors are selected through `ColorId` fields. The actual shades live in `VisualThemeConfig`.
 
