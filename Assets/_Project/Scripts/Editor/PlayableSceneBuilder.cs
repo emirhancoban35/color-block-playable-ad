@@ -51,6 +51,7 @@ namespace Playable.Editor
             camera.transform.localPosition = new Vector3((variant.levelConfig.width - 1) * 0.5f,
                 (variant.levelConfig.height - 1) * 0.5f, -10f);
             Undo.RegisterCreatedObjectUndo(camera.gameObject, "Prepare camera");
+            BackgroundSceneBuilder.Build(camera.transform, variant.visualTheme.backgroundColor);
             Font displayFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/_Project/Fonts/LilitaOne-Regular.ttf");
             var hud = HudSceneBuilder.Build(Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"), displayFont, variant.adFlowConfig, bootstrap.transform);
             Undo.RegisterCreatedObjectUndo(hud.gameObject, "Prepare HUD");
@@ -75,9 +76,12 @@ namespace Playable.Editor
                 if (errors.Count > 0) throw new InvalidOperationException(string.Join("\n", errors.ToArray()));
             }
             VerifyBoardRebuild();
-            Shader shader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Shaders/VertexColor.shader");
-            foreach (var message in ShaderUtil.GetShaderMessages(shader))
-                if (message.severity == UnityEditor.Rendering.ShaderCompilerMessageSeverity.Error) throw new InvalidOperationException(message.message);
+            foreach (string path in new[] { "Assets/_Project/Shaders/VertexColor.shader", "Assets/_Project/Shaders/MovingWater.shader" })
+            {
+                Shader shader = AssetDatabase.LoadAssetAtPath<Shader>(path);
+                foreach (var message in ShaderUtil.GetShaderMessages(shader))
+                    if (message.severity == UnityEditor.Rendering.ShaderCompilerMessageSeverity.Error) throw new InvalidOperationException(message.message);
+            }
             Debug.Log("COLOR_BLOCK_VERIFIED: variants, board rebuild, shared meshes and shader import passed.");
         }
 

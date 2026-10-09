@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3184bd8af92841de927edb71053b81a2, type: 3}
   m_Name: Theme_Showcase
   m_EditorClassIdentifier: 
-  backgroundColor: {r: 0.83, g: 0.9, b: 1, a: 1}
+  backgroundColor: {r: 0.58, g: 0.77, b: 0.85, a: 1}
   boardColorId: 8
   borderColorId: 0
   cellGap: 0.11
