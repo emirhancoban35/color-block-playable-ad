@@ -47,6 +47,8 @@ namespace Playable.Platform
             ended = true;
 #if PLAYWORKS_SDK
             Luna.Unity.Analytics.LogEvent(won ? Luna.Unity.Analytics.EventType.LevelWon : Luna.Unity.Analytics.EventType.LevelFailed);
+            if (won) Luna.Unity.Analytics.LogEvent("PlayerWon", 1);
+            else Luna.Unity.Analytics.LogEvent("PlayerLost", 0);
             if (endCardShown) Luna.Unity.Analytics.LogEvent(Luna.Unity.Analytics.EventType.EndCardShown);
             Luna.Unity.LifeCycle.GameEnded();
 #endif
@@ -54,6 +56,7 @@ namespace Playable.Platform
         public void Install()
         {
 #if PLAYWORKS_SDK
+            Luna.Unity.Analytics.LogEvent("CtaClicked", ended ? 1 : 0);
             Luna.Unity.Playable.InstallFullGame();
 #else
             Debug.Log("[Playable Preview] CTA clicked. Install the Playworks SDK to enable store navigation.");
