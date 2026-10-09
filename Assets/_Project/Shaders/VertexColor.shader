@@ -1,6 +1,6 @@
 Shader "Playable/VertexColor"
 {
-    Properties { _Color ("Tint", Color) = (1,1,1,1) }
+    Properties { _Color ("Tint", Color) = (1,1,1,1) _Highlight ("White highlight", Float) = 0 }
     SubShader
     {
         Tags { "RenderType"="Opaque" "Queue"="Geometry" }
@@ -15,6 +15,7 @@ Shader "Playable/VertexColor"
             struct appdata { float4 vertex : POSITION; fixed4 color : COLOR; };
             struct v2f { float4 position : SV_POSITION; fixed4 color : COLOR; };
             fixed4 _Color;
+            fixed _Highlight;
             v2f vert(appdata v)
             {
                 v2f o;
@@ -23,6 +24,7 @@ Shader "Playable/VertexColor"
                 #ifndef UNITY_COLORSPACE_GAMMA
                 o.color.rgb = GammaToLinearSpace(o.color.rgb);
                 #endif
+                o.color.rgb = lerp(o.color.rgb, fixed3(1,1,1), _Highlight);
                 o.color *= _Color;
                 return o;
             }

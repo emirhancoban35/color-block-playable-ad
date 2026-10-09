@@ -75,6 +75,7 @@ namespace Playable
                     selected = board.BlockAt(GridMath.WorldToGrid(world, 1f));
                     if (selected >= 0)
                     {
+                        view.SelectBlock(selected);
                         Vector2Int origin = board.Origin(selected);
                         grabOffset = new Vector2(world.x - origin.x, world.y - origin.y);
                         interacted = true;
@@ -165,6 +166,7 @@ namespace Playable
 
         private void FinishGesture()
         {
+            view.ClearSelection();
             if (gestureMoved && !session.Ended)
             {
                 session.RecordMove();

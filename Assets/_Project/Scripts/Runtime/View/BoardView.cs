@@ -9,6 +9,9 @@ namespace Playable.View
     {
         [SerializeField] private Transform[] blocks = new Transform[0];
         [SerializeField] private Color[] blockColors = new Color[0];
+        [SerializeField] private MeshFilter selectionOutline;
+        private MaterialPropertyBlock outlineProperties;
+        private int selectedBlock = -1;
         private Vector3[] targets;
         private int[] moving;
         private int movingCount;
@@ -21,18 +24,43 @@ namespace Playable.View
             targets = new Vector3[blocks.Length];
             moving = new int[blocks.Length];
             movingCount = 0;
+            outlineProperties = new MaterialPropertyBlock();
+            outlineProperties.SetVector("_Color", Vector4.one);
+            outlineProperties.SetFloat("_Highlight", 1f);
         }
 
 #if UNITY_EDITOR
-        public void Configure(Transform[] transforms, Color[] colors)
+        public void Configure(Transform[] transforms, Color[] colors, MeshFilter outline)
         {
             blocks = transforms;
             blockColors = colors;
+            selectionOutline = outline;
             ResetMotion();
             ApplyColors();
         }
 #endif
 
+        public void SelectBlock(int index)
+        {
+            ClearSelection();
+            selectedBlock = index;
+            blocks[index].localScale = Vector3.one * 1.025f;
+            Mesh mesh = blocks[index].GetComponent<MeshFilter>().sharedMesh;
+            selectionOutline.sharedMesh = mesh;
+            selectionOutline.transform.SetParent(blocks[index], false);
+            selectionOutline.transform.localScale = Vector3.one * 1.04f;
+            selectionOutline.transform.localPosition = mesh.bounds.center * -0.04f + Vector3.forward * 0.02f;
+            selectionOutline.GetComponent<MeshRenderer>().SetPropertyBlock(outlineProperties);
+            selectionOutline.gameObject.SetActive(true);
+        }
+
+        public void ClearSelection()
+        {
+            if (selectedBlock < 0) return;
+            blocks[selectedBlock].localScale = Vector3.one;
+            selectionOutline.gameObject.SetActive(false);
+            selectedBlock = -1;
+        }
         private void ApplyColors()
         {
             for (int i = 0; i < blocks.Length; i++)

@@ -73,7 +73,9 @@ namespace Playable.Editor
                 colors[b] = theme.GetColor(board.Color(b));
             }
             BoardView view = root.AddComponent<BoardView>();
-            view.Configure(blocks, colors);
+            Transform outline = MakeMesh("Selection Outline", blocks[0].GetComponent<MeshFilter>().sharedMesh, theme.sharedMaterial, root.transform);
+            outline.gameObject.SetActive(false);
+            view.Configure(blocks, colors, outline.GetComponent<MeshFilter>());
             Undo.RegisterCreatedObjectUndo(root, "Build board");
             EditorUtility.SetDirty(view);
             return view;
