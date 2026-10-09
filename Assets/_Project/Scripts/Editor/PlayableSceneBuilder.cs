@@ -88,7 +88,9 @@ namespace Playable.Editor
             var previous = bootstrap.BoardView;
             MaterialPropertyBlock tint = new MaterialPropertyBlock();
             previous.transform.Find("red").GetComponent<MeshRenderer>().GetPropertyBlock(tint);
-            if (tint.GetColor("_Color") != variant.visualTheme.GetColor(Data.Core.ColorId.Red))
+            Color expectedTint = variant.visualTheme.GetColor(Data.Core.ColorId.Red);
+            if (QualitySettings.activeColorSpace == ColorSpace.Linear) expectedTint = expectedTint.linear;
+            if ((tint.GetVector("_Color") - (Vector4)expectedTint).sqrMagnitude > 0.00000001f)
                 throw new InvalidOperationException("Block colors were not restored after reopening the scene.");
             GameObject manualObject = new GameObject("Manual object");
             manualObject.transform.SetParent(bootstrap.transform, false);

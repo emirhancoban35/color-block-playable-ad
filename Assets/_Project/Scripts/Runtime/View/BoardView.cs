@@ -39,7 +39,9 @@ namespace Playable.View
             {
                 // Playworks keeps the property block reference; each renderer needs its own.
                 MaterialPropertyBlock properties = new MaterialPropertyBlock();
-                properties.SetColor("_Color", blockColors[i]);
+                // SetVector avoids Unity/Playworks differences in implicit color conversion.
+                Color tint = QualitySettings.activeColorSpace == ColorSpace.Linear ? blockColors[i].linear : blockColors[i];
+                properties.SetVector("_Color", tint);
                 blocks[i].GetComponent<MeshRenderer>().SetPropertyBlock(properties);
             }
         }
