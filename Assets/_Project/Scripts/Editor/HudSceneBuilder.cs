@@ -29,7 +29,7 @@ namespace Playable.Editor
             Text progress = Label("Progress", "", font, 38, safeRoot, new Vector2(0.5f, 0.86f), new Vector2(900, 70));
             progress.color = title.color;
             RectTransform instruction = NewRect("Instruction", safeRoot);
-            instruction.anchorMin = instruction.anchorMax = new Vector2(0.5f, 0.19f);
+            instruction.anchorMin = instruction.anchorMax = new Vector2(0.5f, 0.145f);
             instruction.sizeDelta = new Vector2(950, 115);
             Image instructionBackground = instruction.gameObject.AddComponent<Image>();
             instructionBackground.color = Color.white;
@@ -46,7 +46,7 @@ namespace Playable.Editor
             Text subtitle = Label("Subtitle", flow.endCardSubtitle, font, 38, endCard.transform, new Vector2(0.5f, 0.49f), new Vector2(1000, 120));
             endCard.SetActive(false);
             RectTransform cta = NewRect("CTA", safeRoot);
-            cta.anchorMin = cta.anchorMax = new Vector2(0.5f, 0.085f);
+            cta.anchorMin = cta.anchorMax = new Vector2(0.5f, 0.065f);
             cta.sizeDelta = new Vector2(690, 130);
             Image button = cta.gameObject.AddComponent<Image>();
             button.color = new Color(0.02f, 0.58f, 0.94f);

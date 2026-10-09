@@ -19,6 +19,7 @@ namespace Playable
         private AdSession session;
         [SerializeField] private Camera boardCamera;
         private int selected = -1, escaping = -1;
+        private int progressGoal;
         private float idleTime, hintTime;
         private int hintBlock = -1, hintCursor;
         private Vector2 grabOffset;
@@ -57,7 +58,9 @@ namespace Playable
             session = new AdSession(variant.adFlowConfig);
             boardCamera.backgroundColor = variant.visualTheme.backgroundColor;
             hud.Initialize(variant.adFlowConfig);
-            hud.Progress(0, board.BlockCount, 0);
+            progressGoal = variant.adFlowConfig.endCondition == EndCondition.OnTargetBlocksCleared
+                ? Mathf.Min(board.BlockCount, variant.adFlowConfig.targetBlocksToClear) : board.BlockCount;
+            hud.Progress(0, progressGoal, 0);
             Input.simulateMouseWithTouches = true;
             Application.targetFrameRate = 60;
             Resize();
@@ -236,7 +239,7 @@ namespace Playable
             {
                 session.RecordMove();
                 if (session.Moves == 1) platform.FirstMoveCompleted();
-                hud.Progress(board.ClearedCount, board.BlockCount, session.Moves);
+                hud.Progress(board.ClearedCount, progressGoal, session.Moves);
             }
             selected = -1;
             gestureMoved = false;

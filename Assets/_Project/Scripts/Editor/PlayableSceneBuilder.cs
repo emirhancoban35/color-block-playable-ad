@@ -11,7 +11,7 @@ namespace Playable.Editor
     public static class PlayableSceneBuilder
     {
         public const string ScenePath = "Assets/_Project/Scenes/Playable_2D.unity";
-        public const string DefaultVariantPath = "Assets/_Project/Configs/Variant_A.asset";
+        public const string DefaultVariantPath = "Assets/_Project/Configs/Variant_Showcase.asset";
 
         public static void Prepare(PlayableVariantConfig variant)
         {
