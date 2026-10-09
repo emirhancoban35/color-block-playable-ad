@@ -7,7 +7,7 @@ namespace Playable.Editor
     internal sealed class FlatMeshBuilder
     {
         private readonly List<Vector3> vertices = new List<Vector3>();
-        private readonly List<Color> colors = new List<Color>();
+        private readonly List<Color32> colors = new List<Color32>();
         private readonly List<int> triangles = new List<int>();
 
         public void Tile(Vector2 center, float left, float right, float bottom, float top, float radius, Color color,
@@ -130,7 +130,7 @@ namespace Playable.Editor
             mesh.name = name;
             if (vertices.Count > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             mesh.vertices = vertices.ToArray();
-            mesh.colors = colors.ToArray();
+            mesh.colors32 = colors.ToArray();
             mesh.triangles = triangles.ToArray();
             mesh.RecalculateBounds();
             return mesh;

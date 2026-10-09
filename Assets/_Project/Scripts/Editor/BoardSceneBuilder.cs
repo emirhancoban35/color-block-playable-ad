@@ -139,7 +139,15 @@ namespace Playable.Editor
                 .Append(theme.cornerRadius.ToString("R", CultureInfo.InvariantCulture)).Append(';').Append(theme.showStuds);
             string path = MeshFolder + "/Shape_" + Hash128.Compute(key.ToString()) + ".asset";
             Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
-            if (mesh != null) return mesh;
+            if (mesh != null)
+            {
+                if (mesh.GetVertexAttributeFormat(UnityEngine.Rendering.VertexAttribute.Color) != UnityEngine.Rendering.VertexAttributeFormat.UNorm8)
+                {
+                    mesh.colors32 = mesh.colors32;
+                    EditorUtility.SetDirty(mesh);
+                }
+                return mesh;
+            }
 
             FlatMeshBuilder builder = new FlatMeshBuilder();
             foreach (Vector2Int cell in cells)

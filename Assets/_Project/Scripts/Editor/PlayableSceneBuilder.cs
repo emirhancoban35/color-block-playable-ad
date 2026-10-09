@@ -114,6 +114,9 @@ namespace Playable.Editor
             MeshFilter purple = bootstrap.BoardView.transform.Find("purple").GetComponent<MeshFilter>();
             if (blue.sharedMesh != purple.sharedMesh || !EditorUtility.IsPersistent(blue.sharedMesh))
                 throw new InvalidOperationException("Equal shapes must share a persistent mesh.");
+            foreach (var filter in bootstrap.BoardView.GetComponentsInChildren<MeshFilter>())
+                if (filter.sharedMesh.GetVertexAttributeFormat(UnityEngine.Rendering.VertexAttribute.Color) != UnityEngine.Rendering.VertexAttributeFormat.UNorm8)
+                    throw new InvalidOperationException("Prepared meshes must store colors in four bytes per vertex.");
             UnityEngine.Object.DestroyImmediate(manualObject);
             EditorSceneManager.SaveScene(scene);
         }
