@@ -77,25 +77,25 @@ namespace Playable.Editor
             }
         }
 
-        public void Arrow(Vector2 center, Vector2 direction, Color color)
+        public void Arrow(Vector2 center, Vector2 direction, Color color, float scale = 1f)
         {
-            Vector2 side = new Vector2(-direction.y, direction.x) * 0.13f;
+            Vector2 side = new Vector2(-direction.y, direction.x) * (0.13f * scale);
             int start = vertices.Count;
-            Add(center + direction * 0.14f, -0.08f, color);
-            Add(center - direction * 0.1f + side, -0.08f, color);
-            Add(center - direction * 0.1f - side, -0.08f, color);
+            Add(center + direction * (0.14f * scale), -0.08f, color);
+            Add(center - direction * (0.1f * scale) + side, -0.08f, color);
+            Add(center - direction * (0.1f * scale) - side, -0.08f, color);
             Triangle(start, start + 1, start + 2);
         }
 
-        public void MovementArrow(Vector2 center, Vector2 direction, bool bothWays)
+        public void MovementArrow(Vector2 center, Vector2 direction, bool bothWays, float scale)
         {
             // Alpha zero keeps the symbol white when the shader applies the block tint.
             Color white = new Color(1f, 1f, 1f, 0f);
             bool horizontal = direction.x != 0f;
-            Rect(center.x - (horizontal ? 0.2f : 0.045f), center.y - (horizontal ? 0.045f : 0.2f),
-                horizontal ? 0.4f : 0.09f, horizontal ? 0.09f : 0.4f, -0.08f, white);
-            Arrow(center + direction * 0.2f, direction, white);
-            if (bothWays) Arrow(center - direction * 0.2f, -direction, white);
+            Rect(center.x - (horizontal ? 0.2f : 0.045f) * scale, center.y - (horizontal ? 0.045f : 0.2f) * scale,
+                (horizontal ? 0.4f : 0.09f) * scale, (horizontal ? 0.09f : 0.4f) * scale, -0.08f, white);
+            Arrow(center + direction * (0.2f * scale), direction, white, scale);
+            if (bothWays) Arrow(center - direction * (0.2f * scale), -direction, white, scale);
         }
 
         private static Color Shade(Color color, float amount)

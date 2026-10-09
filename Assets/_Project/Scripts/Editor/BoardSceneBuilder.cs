@@ -213,7 +213,7 @@ namespace Playable.Editor
                 .Append(theme.cornerRadius.ToString("R", CultureInfo.InvariantCulture)).Append(';').Append(theme.showStuds);
             var movement = variant.levelConfig.blocks[block].movementMode;
             bool directional = movement != Data.Core.MovementMode.Free && movement != Data.Core.MovementMode.Locked;
-            if (directional) key.Append(";movement:2:").Append((int)movement);
+            if (directional) key.Append(";movement:3:").Append((int)movement);
             string path = MeshFolder + "/Shape_" + Hash128.Compute(key.ToString()) + ".asset";
             Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (mesh != null)
@@ -257,11 +257,24 @@ namespace Playable.Editor
                     case Data.Core.MovementMode.DownOnly: direction = Vector2.down; break;
                     default: direction = Vector2.up; break;
                 }
-                builder.MovementArrow(position, direction, movement == Data.Core.MovementMode.HorizontalOnly || movement == Data.Core.MovementMode.VerticalOnly);
+                float scale = 2.1f;
+                Vector2 halfSize = direction.x != 0f ? new Vector2(0.34f, 0.13f) : new Vector2(0.13f, 0.34f);
+                while (scale > 0.8f && !FitsShape(cells, position, halfSize * scale + Vector2.one * theme.cellGap * 0.5f)) scale *= 0.85f;
+                builder.MovementArrow(position, direction, movement == Data.Core.MovementMode.HorizontalOnly || movement == Data.Core.MovementMode.VerticalOnly, scale);
             }
             mesh = builder.Build("Block shape");
             AssetDatabase.CreateAsset(mesh, path);
             return mesh;
+        }
+
+        private static bool FitsShape(List<Vector2Int> cells, Vector2 center, Vector2 halfSize)
+        {
+            Vector2Int min = Vector2Int.FloorToInt(center - halfSize + Vector2.one * 0.5f);
+            Vector2Int max = Vector2Int.FloorToInt(center + halfSize + Vector2.one * 0.5f);
+            for (int y = min.y; y <= max.y; y++)
+                for (int x = min.x; x <= max.x; x++)
+                    if (!cells.Contains(new Vector2Int(x, y))) return false;
+            return true;
         }
 
         private static Mesh SaveBoardMesh(Mesh mesh)
