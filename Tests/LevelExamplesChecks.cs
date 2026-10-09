@@ -96,11 +96,7 @@ public static class LevelExamplesChecks
         canvas.renderMode = RenderMode.ScreenSpaceCamera;
         canvas.worldCamera = camera;
         canvas.planeDistance = 1f;
-        var root = (RectTransform)bootstrap.Hud.transform.Find("Safe Area");
-        root.anchorMin = new Vector2(safe.xMin / width, safe.yMin / height);
-        root.anchorMax = new Vector2(safe.xMax / width, safe.yMax / height);
-        root.offsetMin = root.offsetMax = Vector2.zero;
-        ((RectTransform)bootstrap.Hud.transform.Find("Header Background")).anchorMin = new Vector2(0, root.anchorMax.y);
+        bootstrap.Hud.Resize(safe, width, height);
         Canvas.ForceUpdateCanvases();
         camera.Render();
         RenderTexture.active = target;

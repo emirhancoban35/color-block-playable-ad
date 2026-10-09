@@ -25,7 +25,7 @@ public static class ResponsiveLayoutChecks
                 protectedArea.yMax <= reported.yMax, "Reported insets must never be reduced");
             Render(size, fallback);
         }
-        Debug.Log("RESPONSIVE_LAYOUT_PASSED: 5 phone/orientation sizes; full-viewport fallback, real insets preserved, white background at screen top, title and CTA inside protected area.");
+        Debug.Log("RESPONSIVE_LAYOUT_PASSED: 5 phone/orientation sizes; full-viewport fallback, real insets preserved, white background at screen top, title and CTA inside protected area; end-card shade covers all four screen corners during and after its entrance animation.");
     }
 
     private static void Render(Vector2Int size, Rect safe)
@@ -45,11 +45,7 @@ public static class ResponsiveLayoutChecks
         canvas.planeDistance = 1f;
         // Simulate the SDK reporting the full viewport, using the actual layout policy.
         var root = (RectTransform)bootstrap.Hud.transform.Find("Safe Area");
-        root.anchorMin = new Vector2(safe.xMin / size.x, safe.yMin / size.y);
-        root.anchorMax = new Vector2(safe.xMax / size.x, safe.yMax / size.y);
-        root.offsetMin = root.offsetMax = Vector2.zero;
-        var background = (RectTransform)bootstrap.Hud.transform.Find("Header Background");
-        background.anchorMin = new Vector2(0f, root.anchorMax.y);
+        bootstrap.Hud.Resize(safe, size.x, size.y);
         Canvas.ForceUpdateCanvases();
         var protectedCorners = new Vector3[4];
         root.GetWorldCorners(protectedCorners);
@@ -69,6 +65,23 @@ public static class ResponsiveLayoutChecks
         Color top = image.GetPixel(size.x / 2, size.y - 2);
         Require(top.r > .99f && top.g > .99f && top.b > .99f, "White background leaves top gap");
         System.IO.File.WriteAllBytes("/private/tmp/colorblock-responsive-" + size.x + "x" + size.y + ".png", image.EncodeToPNG());
+        bootstrap.Hud.EndCard(true, true, true, "YOU GOT IT!");
+        foreach (float delta in new[] { 0.01f, 0.3f })
+        {
+            bootstrap.Hud.TickVisuals(delta, false);
+            Canvas.ForceUpdateCanvases();
+            camera.Render();
+            image.ReadPixels(new Rect(0, 0, size.x, size.y), 0, 0);
+            image.Apply();
+            foreach (int x in new[] { 1, size.x - 2 })
+                foreach (int y in new[] { 1, size.y - 2 })
+                {
+                    Color corner = image.GetPixel(x, y);
+                    Require(Mathf.Max(corner.r, Mathf.Max(corner.g, corner.b)) < .4f,
+                        "End-card shade leaves a screen-edge gap at " + size);
+                }
+        }
+        System.IO.File.WriteAllBytes("/private/tmp/colorblock-endcard-" + size.x + "x" + size.y + ".png", image.EncodeToPNG());
         camera.targetTexture = null;
         RenderTexture.active = null;
         UnityEngine.Object.DestroyImmediate(target);

@@ -5,7 +5,7 @@ A Color Block Jam-inspired playable ad built with Unity and Playworks. Levels, v
 I built this as a portfolio project, with most of the scene setup done in the editor. The runtime handles input, grid rules, animation, and the ad session. Blocks, meshes, UI, and effects are already in the scene when it starts.
 
 <p align="center">
-  <img src="docs/images/gameplay-portrait.png" width="300" alt="80-block level in portrait orientation, rendered in Unity">
+  <img src="docs/images/level-heart.png" width="300" alt="Heart puzzle with large white horizontal and vertical movement arrows">
 </p>
 
 | | |
@@ -327,6 +327,8 @@ Win/loss events belong to the completion flows; the manual showcase does not emi
 
 ## Responsive UI
 
+The end-card shade covers the entire viewport, including the safe-area margins. Result text and CTA stay inside the protected area. The entrance animation scales only the result text, so the shade keeps covering the screen throughout the animation.
+
 The Canvas scales from a `1080 × 1920` reference resolution. The white header background reaches the top edge, while the text sits inside the protected content area. The CTA anchors to its bottom edge, and the camera uses the same area for board framing.
 
 Playworks 7.2.0 returns the full viewport from `Screen.safeArea`, including the preview's notch overlay. I added a fallback in `PlayableHud.GetSafeArea` after the header was clipped in the iPhone preview.
@@ -435,7 +437,7 @@ Batch helpers live outside `Assets`. Copy them into an isolated project's `Asset
 | [`LevelExamplesChecks`](Tests/LevelExamplesChecks.cs) | Solves all three example levels, checks one-way and locked movement, verifies win conditions, renders previews, and restores the stress scene |
 | [`StressSceneChecks`](Tests/StressSceneChecks.cs) | Solves all 80 blocks; checks mesh sharing, movement queues, repeated targets, and allocations |
 | [`BurstVisibilityChecks`](Tests/BurstVisibilityChecks.cs) | Checks prepared renderers, fragment size, lifetime, and cleanup |
-| [`ResponsiveLayoutChecks`](Tests/ResponsiveLayoutChecks.cs) | Checks five screen/orientation sizes, full-viewport safe-area fallback, larger reported insets, and title/CTA bounds |
+| [`ResponsiveLayoutChecks`](Tests/ResponsiveLayoutChecks.cs) | Checks five screen/orientation sizes, full-viewport safe-area fallback, larger reported insets, title/CTA bounds, and full-screen end-card coverage during and after animation |
 
 Managed allocations measured in Unity after initialization and warm-up:
 

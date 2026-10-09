@@ -17,12 +17,13 @@ namespace Playable.View
         [SerializeField] private Text hook;
         [SerializeField] private RectTransform instruction;
         [SerializeField] private RectTransform headerBackground;
+        [SerializeField] private RectTransform endBackdrop;
         private float visualTime, resultTime = -1f;
         private bool fullScreenClick;
 
 #if UNITY_EDITOR
         public void Configure(RectTransform safe, Text progressLabel, Text tutorialLabel, GameObject card,
-            Text resultLabel, Text subtitleLabel, RectTransform button, Text buttonLabel, Text hookLabel, RectTransform instructionPanel, RectTransform headerPanel)
+            Text resultLabel, Text subtitleLabel, RectTransform button, Text buttonLabel, Text hookLabel, RectTransform instructionPanel, RectTransform headerPanel, RectTransform backdrop)
         {
             safeRoot = safe;
             progress = progressLabel;
@@ -35,6 +36,7 @@ namespace Playable.View
             hook = hookLabel;
             instruction = instructionPanel;
             headerBackground = headerPanel;
+            endBackdrop = backdrop;
         }
 #endif
         public void Initialize(AdFlowConfig flow)
@@ -55,11 +57,18 @@ namespace Playable.View
 
         public void Resize()
         {
-            Rect safe = GetSafeArea(Screen.width, Screen.height, Screen.safeArea);
-            safeRoot.anchorMin = new Vector2(safe.xMin / Screen.width, safe.yMin / Screen.height);
-            safeRoot.anchorMax = new Vector2(safe.xMax / Screen.width, safe.yMax / Screen.height);
+            Resize(GetSafeArea(Screen.width, Screen.height, Screen.safeArea), Screen.width, Screen.height);
+        }
+        public void Resize(Rect safe, int width, int height)
+        {
+            safeRoot.anchorMin = new Vector2(safe.xMin / width, safe.yMin / height);
+            safeRoot.anchorMax = new Vector2(safe.xMax / width, safe.yMax / height);
             safeRoot.offsetMin = safeRoot.offsetMax = Vector2.zero;
             headerBackground.anchorMin = new Vector2(0f, safeRoot.anchorMax.y);
+            Vector2 span = safeRoot.anchorMax - safeRoot.anchorMin;
+            // The shade covers the canvas while text and CTA keep their safe-area layout.
+            endBackdrop.anchorMin = new Vector2(-safeRoot.anchorMin.x / span.x, -safeRoot.anchorMin.y / span.y);
+            endBackdrop.anchorMax = new Vector2((1f - safeRoot.anchorMin.x) / span.x, (1f - safeRoot.anchorMin.y) / span.y);
         }
         public static Rect GetSafeArea(int width, int height, Rect reported)
         {
@@ -84,7 +93,7 @@ namespace Playable.View
             {
                 resultTime += dt;
                 float t = Mathf.Min(1f, resultTime / 0.25f);
-                endCard.transform.localScale = Vector3.one * (1f - 0.05f * (1f - t) * (1f - t));
+                endTitle.transform.localScale = subtitle.transform.localScale = Vector3.one * (1f - 0.05f * (1f - t) * (1f - t));
             }
         }
         public void EndCard(bool won, bool visible, bool fullScreen, string title)
