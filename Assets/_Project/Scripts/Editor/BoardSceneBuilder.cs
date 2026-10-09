@@ -75,7 +75,27 @@ namespace Playable.Editor
             BoardView view = root.AddComponent<BoardView>();
             Transform outline = MakeMesh("Selection Outline", blocks[0].GetComponent<MeshFilter>().sharedMesh, theme.sharedMaterial, root.transform);
             outline.gameObject.SetActive(false);
-            view.Configure(blocks, colors, outline.GetComponent<MeshFilter>());
+            GameObject burstRoot = new GameObject("Exit Burst");
+            burstRoot.transform.SetParent(root.transform, false);
+            ExitBurst burst = burstRoot.AddComponent<ExitBurst>();
+            FlatMeshBuilder fragment = new FlatMeshBuilder();
+            fragment.Rect(-0.09f, -0.09f, 0.18f, 0.18f, 0f, Color.white * 0.65f);
+            fragment.Rect(-0.085f, -0.035f, 0.14f, 0.12f, -0.01f, Color.white);
+            string fragmentPath = MeshFolder + "/Fragment.asset";
+            Mesh fragmentMesh = AssetDatabase.LoadAssetAtPath<Mesh>(fragmentPath);
+            if (fragmentMesh == null)
+            {
+                fragmentMesh = fragment.Build("Exit fragment");
+                AssetDatabase.CreateAsset(fragmentMesh, fragmentPath);
+            }
+            Transform[] pieces = new Transform[8];
+            for (int i = 0; i < pieces.Length; i++)
+            {
+                pieces[i] = MakeMesh("Fragment " + i, fragmentMesh, theme.sharedMaterial, burstRoot.transform);
+                pieces[i].gameObject.SetActive(false);
+            }
+            burst.Configure(pieces);
+            view.Configure(blocks, colors, outline.GetComponent<MeshFilter>(), burst);
             Undo.RegisterCreatedObjectUndo(root, "Build board");
             EditorUtility.SetDirty(view);
             return view;

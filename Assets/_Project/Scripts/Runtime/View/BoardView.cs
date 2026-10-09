@@ -10,6 +10,7 @@ namespace Playable.View
         [SerializeField] private Transform[] blocks = new Transform[0];
         [SerializeField] private Color[] blockColors = new Color[0];
         [SerializeField] private MeshFilter selectionOutline;
+        [SerializeField] private ExitBurst exitBurst;
         private MaterialPropertyBlock outlineProperties;
         private int selectedBlock = -1;
         private Vector3[] targets;
@@ -17,6 +18,7 @@ namespace Playable.View
         private int movingCount;
 
         public int BlockCount { get { return blocks.Length; } }
+        public bool BurstPlaying { get { return exitBurst.IsPlaying; } }
         private void OnEnable() { ResetMotion(); ApplyColors(); }
 
         private void ResetMotion()
@@ -30,11 +32,12 @@ namespace Playable.View
         }
 
 #if UNITY_EDITOR
-        public void Configure(Transform[] transforms, Color[] colors, MeshFilter outline)
+        public void Configure(Transform[] transforms, Color[] colors, MeshFilter outline, ExitBurst burst)
         {
             blocks = transforms;
             blockColors = colors;
             selectionOutline = outline;
+            exitBurst = burst;
             ResetMotion();
             ApplyColors();
         }
@@ -49,7 +52,7 @@ namespace Playable.View
             selectionOutline.sharedMesh = mesh;
             selectionOutline.transform.SetParent(blocks[index], false);
             selectionOutline.transform.localScale = Vector3.one * 1.04f;
-            selectionOutline.transform.localPosition = mesh.bounds.center * -0.04f + Vector3.forward * 0.02f;
+            selectionOutline.transform.localPosition = mesh.bounds.center * -0.04f + Vector3.forward * 0.12f;
             selectionOutline.GetComponent<MeshRenderer>().SetPropertyBlock(outlineProperties);
             selectionOutline.gameObject.SetActive(true);
         }
@@ -104,5 +107,8 @@ namespace Playable.View
 
         public void PlaceBlock(int index, Vector3 position) { blocks[index].localPosition = position; }
         public void HideBlock(int index) { blocks[index].gameObject.SetActive(false); }
+        public Vector3 BlockCenter(int index) { return blocks[index].localPosition + blocks[index].GetComponent<MeshFilter>().sharedMesh.bounds.center; }
+        public void Burst(int index, Vector3 origin, Vector2 direction, float duration) { exitBurst.Begin(origin, direction, blockColors[index], duration); }
+        public void TickBurst(float dt) { exitBurst.Tick(dt); }
     }
 }

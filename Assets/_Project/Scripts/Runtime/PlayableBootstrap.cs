@@ -21,6 +21,9 @@ namespace Playable
         private int selected = -1, escaping = -1;
         private Vector2 grabOffset;
         private Vector3 escapeStart, escapeTarget;
+        private Vector3 burstOrigin;
+        private Vector2 escapeDirection;
+        private bool escapeBurstStarted;
         private float escapeTime, endTime;
         private bool gestureMoved, paused, interacted, presented;
         private int screenWidth, screenHeight;
@@ -69,7 +72,7 @@ namespace Playable
             if (Input.GetMouseButtonDown(0))
             {
                 if (hud.HitCta(Input.mousePosition)) { platform.Install(); return; }
-                if (!session.Ended && escaping < 0)
+                if (!session.Ended && escaping < 0 && !view.BurstPlaying)
                 {
                     Vector3 world = PointerWorld();
                     selected = board.BlockAt(GridMath.WorldToGrid(world, 1f));
@@ -91,10 +94,20 @@ namespace Playable
             {
                 escapeTime += dt;
                 float t = Mathf.Clamp01(escapeTime / variant.exitDuration);
-                view.PlaceBlock(escaping, Vector3.Lerp(escapeStart, escapeTarget, t));
+                if (!escapeBurstStarted)
+                {
+                    view.PlaceBlock(escaping, Vector3.Lerp(escapeStart, escapeTarget, t));
+                    if (t >= 0.35f)
+                    {
+                        view.HideBlock(escaping);
+                        view.Burst(escaping, burstOrigin, escapeDirection, variant.exitDuration);
+                        escapeBurstStarted = true;
+                    }
+                }
                 if (t >= 1f) { view.HideBlock(escaping); escaping = -1; }
             }
-            if (escaping < 0) session.Evaluate(board.ClearedCount, board.BlockCount);
+            view.TickBurst(dt);
+            if (escaping < 0 && !view.BurstPlaying) session.Evaluate(board.ClearedCount, board.BlockCount);
             if (session.Ended)
             {
                 if (selected >= 0) FinishGesture();
@@ -149,6 +162,12 @@ namespace Playable
                     view.StopMoving(selected);
                     escaping = selected;
                     escapeTime = 0f;
+                    escapeBurstStarted = false;
+                    escapeDirection = direction;
+                    burstOrigin = view.BlockCenter(selected);
+                    burstOrigin.z = -0.3f;
+                    if (direction.x != 0) burstOrigin.x = direction.x > 0 ? board.Width - 0.3f : -0.7f;
+                    else burstOrigin.y = direction.y > 0 ? board.Height - 0.3f : -0.7f;
                     escapeStart = GridMath.GridToWorld(board.Origin(selected), 1f, -0.15f);
                     int travel = 1;
                     for (int c = 0; c < board.CellCount(selected); c++)
