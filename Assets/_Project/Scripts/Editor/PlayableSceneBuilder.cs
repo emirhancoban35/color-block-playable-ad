@@ -51,7 +51,8 @@ namespace Playable.Editor
             camera.transform.localPosition = new Vector3((variant.levelConfig.width - 1) * 0.5f,
                 (variant.levelConfig.height - 1) * 0.5f, -10f);
             Undo.RegisterCreatedObjectUndo(camera.gameObject, "Prepare camera");
-            var hud = HudSceneBuilder.Build(Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"), variant.adFlowConfig, bootstrap.transform);
+            Font displayFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/_Project/Fonts/LilitaOne-Regular.ttf");
+            var hud = HudSceneBuilder.Build(Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"), displayFont, variant.adFlowConfig, bootstrap.transform);
             Undo.RegisterCreatedObjectUndo(hud.gameObject, "Prepare HUD");
             bootstrap.Configure(variant, board, camera, hud);
             EditorUtility.SetDirty(bootstrap);
