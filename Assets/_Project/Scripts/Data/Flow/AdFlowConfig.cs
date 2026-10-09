@@ -27,6 +27,9 @@ namespace Data.Flow
         
         [Header("Texts")]
         public string tutorialText = "Drag to escape!";
+#if PLAYWORKS_SDK
+        [LunaPlaygroundField("CTA Text", 0, "Texts")]
+#endif
         public string ctaText = "PLAY NOW";
         public string endCardTitle = "AWESOME!";
         public string endCardSubtitle = "Can you clear them all?";
