@@ -40,6 +40,7 @@ namespace Playable.Editor
                     if (!board.IsActive(cell)) continue;
                     background.Tile(cell, -0.48f, 0.48f, -0.48f, 0.48f, 0.08f, board.IsBlocked(cell) ? theme.borderColor : theme.boardColor);
                 }
+            BuildWalls(background, level, theme.borderColor);
             foreach (var gate in level.exits)
             {
                 Vector2Int direction = ExitSideUtility.ToDirection(gate.side);
@@ -69,6 +70,47 @@ namespace Playable.Editor
             Undo.RegisterCreatedObjectUndo(root, "Build board");
             EditorUtility.SetDirty(view);
             return view;
+        }
+
+        private static void BuildWalls(FlatMeshBuilder mesh, Data.Level.LevelConfig level, Color color)
+        {
+            for (int side = 0; side < 4; side++)
+            {
+                var exitSide = (Data.Core.ExitSide)side;
+                Vector2Int direction = ExitSideUtility.ToDirection(exitSide);
+                bool horizontal = direction.y != 0;
+                int length = horizontal ? level.width : level.height;
+                bool[] open = new bool[length];
+                foreach (var gate in level.exits)
+                    if (gate.side == exitSide)
+                        for (int i = gate.startIndex; i < gate.startIndex + gate.length; i++) open[i] = true;
+                for (int i = 0; i < length;)
+                {
+                    if (open[i]) { i++; continue; }
+                    int start = i++;
+                    while (i < length && !open[i]) i++;
+                    float from = start - 0.5f - (start == 0 ? 0.35f : 0f);
+                    float to = i - 0.5f + (i == length ? 0.35f : 0f);
+                    float center = (from + to) * 0.5f;
+                    Vector2 position = horizontal
+                        ? new Vector2(center, direction.y > 0 ? level.height - 0.3f : -0.7f)
+                        : new Vector2(direction.x > 0 ? level.width - 0.3f : -0.7f, center);
+                    Wall(mesh, position, horizontal ? to - from - 0.02f : 0.34f,
+                        horizontal ? 0.34f : to - from - 0.02f, color);
+                }
+            }
+            for (int y = 0; y < 2; y++)
+                for (int x = 0; x < 2; x++)
+                    Wall(mesh, new Vector2(x == 0 ? -0.7f : level.width - 0.3f,
+                        y == 0 ? -0.7f : level.height - 0.3f), 0.34f, 0.34f, color);
+        }
+
+        private static void Wall(FlatMeshBuilder mesh, Vector2 center, float width, float height, Color color)
+        {
+            mesh.RoundedRect(center + new Vector2(0f, -0.035f), width, height, 0.12f, 0.06f, color * 0.65f);
+            mesh.RoundedRect(center, width, height, 0.12f, -0.02f, color);
+            mesh.RoundedRect(center + new Vector2(0f, 0.015f), width - 0.06f, height - 0.06f,
+                0.09f, -0.03f, Color.Lerp(color, Color.white, 0.12f));
         }
 
         private static Mesh ShapeMesh(GridBoard board, int block, PlayableVariantConfig variant)
