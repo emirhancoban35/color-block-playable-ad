@@ -38,13 +38,22 @@ namespace Playable.Editor
             Quad(new Vector2(x, y), new Vector2(x + width, y), new Vector2(x + width, y + height), new Vector2(x, y + height), z, color);
         }
 
-        public void RoundedRect(Vector2 center, float width, float height, float radius, float z, Color color)
+        public void RoundedRect(Vector2 center, float width, float height, float radius, float z, Color color, bool raised = false)
         {
-            Fill(Outline(-width * 0.5f, width * 0.5f, -height * 0.5f, height * 0.5f,
-                radius, false, false, false, false), center, z, color, false);
+            Vector2[] outline = Outline(-width * 0.5f, width * 0.5f, -height * 0.5f, height * 0.5f,
+                radius, false, false, false, false);
+            if (!raised) { Fill(outline, center, z, color, false); return; }
+            int start = vertices.Count;
+            Add(center, z, Shade(color, 0.9f));
+            foreach (Vector2 point in outline)
+            {
+                float light = width >= height ? point.y / height : -point.x / width;
+                Add(center + point, z, Shade(color, 0.9f + light * 0.5f));
+            }
+            for (int i = 0; i < outline.Length; i++) Triangle(start, start + 1 + i, start + 1 + (i + 1) % outline.Length);
         }
 
-        public void RoundedCorner(Vector2 center, float outerRadius, float innerRadius, int corner, float z, Color color)
+        public void RoundedCorner(Vector2 center, float outerRadius, float innerRadius, int corner, float z, Color color, bool raised = false)
         {
             const int segments = 6;
             for (int i = 0; i < segments; i++)
@@ -53,8 +62,18 @@ namespace Playable.Editor
                 float b = (corner * 90f + (i + 1) * 90f / segments) * Mathf.Deg2Rad;
                 Vector2 from = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
                 Vector2 to = new Vector2(Mathf.Cos(b), Mathf.Sin(b));
-                Quad(center + from * outerRadius, center + to * outerRadius,
-                    center + to * innerRadius, center + from * innerRadius, z, color);
+                if (!raised)
+                    Quad(center + from * outerRadius, center + to * outerRadius,
+                        center + to * innerRadius, center + from * innerRadius, z, color);
+                else
+                {
+                    int start = vertices.Count;
+                    Add(center + from * outerRadius, z, Shade(color, 0.9f + (from.y - from.x) * 0.2f));
+                    Add(center + to * outerRadius, z, Shade(color, 0.9f + (to.y - to.x) * 0.2f));
+                    Add(center + to * innerRadius, z, Shade(color, 0.9f));
+                    Add(center + from * innerRadius, z, Shade(color, 0.9f));
+                    Triangle(start, start + 1, start + 2); Triangle(start, start + 2, start + 3);
+                }
             }
         }
 

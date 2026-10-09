@@ -136,19 +136,19 @@ namespace Playable.Editor
                     Vector2 center = new Vector2(x == 0 ? -0.5f : level.width - 0.5f,
                         y == 0 ? -0.5f : level.height - 0.5f);
                     int corner = y == 0 ? (x == 0 ? 2 : 3) : (x == 0 ? 1 : 0);
-                    mesh.RoundedCorner(center + new Vector2(0f, -0.065f), 0.5f, 0.01f, corner, 0.06f, color * 0.65f);
+                    mesh.RoundedCorner(center + new Vector2(0f, -0.14f), 0.5f, 0.01f, corner, 0.06f, color * 0.4f);
                     mesh.RoundedCorner(center, 0.5f, 0.01f, corner, -0.02f, color);
-                    mesh.RoundedCorner(center + new Vector2(0f, 0.015f), 0.46f, 0.04f,
-                        corner, -0.03f, Color.Lerp(color, Color.white, 0.12f));
+                    mesh.RoundedCorner(center + new Vector2(0f, 0.015f), 0.46f, 0.025f,
+                        corner, -0.03f, Color.Lerp(color, Color.white, 0.06f), true);
                 }
         }
 
         private static void Wall(FlatMeshBuilder mesh, Vector2 center, float width, float height, Color color)
         {
-            mesh.RoundedRect(center + new Vector2(0f, -0.065f), width, height, 0.16f, 0.06f, color * 0.65f);
+            mesh.RoundedRect(center + new Vector2(0f, -0.14f), width, height, 0.16f, 0.06f, color * 0.4f);
             mesh.RoundedRect(center, width, height, 0.16f, -0.02f, color);
             mesh.RoundedRect(center + new Vector2(0f, 0.015f), width - 0.06f, height - 0.06f,
-                0.12f, -0.03f, Color.Lerp(color, Color.white, 0.12f));
+                0.12f, -0.03f, Color.Lerp(color, Color.white, 0.06f), true);
         }
 
         private static Mesh ShapeMesh(GridBoard board, int block, PlayableVariantConfig variant)
