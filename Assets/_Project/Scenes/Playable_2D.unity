@@ -2216,7 +2216,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Drag blocks to matching exits!
+  m_Text: Tap and clear the board!
 --- !u!1 &441124071
 GameObject:
   m_ObjectHideFlags: 0

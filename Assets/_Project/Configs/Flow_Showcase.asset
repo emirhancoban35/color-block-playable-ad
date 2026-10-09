@@ -25,7 +25,7 @@ MonoBehaviour:
   tutorialDelay: 0.4
   showTutorial: 1
   hookText: Can you solve this?
-  tutorialText: Drag blocks to matching exits!
+  tutorialText: Tap and clear the board!
   ctaText: PLAY NOW
   endCardTitle: YOU GOT IT!
   endCardSubtitle: Ready for the next puzzle?
