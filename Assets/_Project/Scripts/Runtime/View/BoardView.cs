@@ -24,9 +24,10 @@ namespace Playable.View
 
         private void ApplyColors()
         {
-            MaterialPropertyBlock properties = new MaterialPropertyBlock();
             for (int i = 0; i < blocks.Length; i++)
             {
+                // Playworks keeps the property block reference; each renderer needs its own.
+                MaterialPropertyBlock properties = new MaterialPropertyBlock();
                 properties.SetColor("_Color", blockColors[i]);
                 blocks[i].GetComponent<MeshRenderer>().SetPropertyBlock(properties);
             }
