@@ -43,3 +43,11 @@ To recheck the renderer pool, copy Tests/BurstVisibilityChecks.cs into the isola
 Native before/after comparison of 257,640 board pixels is identical (maximum RGB delta 0/255). This confirms the tested view retains its appearance after compaction.
 
 Follow-up Playworks content size: 567,196 bytes (553.90 KiB). ZIP container: 1,456,719 bytes. Full pipeline and empty health report confirmed; ZIP CRC passes.
+
+## Follow-up: Playworks safe-area fallback
+
+Inspected Playworks 7.2.0's generated UnityEngine.js: Screen.safeArea returns Rect(0, 0, Screen.width, Screen.height), so it does not account for the preview notch overlay. The earlier simulated reported-inset check did not reproduce this SDK behavior.
+
+PlayableHud.GetSafeArea now intersects reported safe bounds with a responsive protected region: portrait top 6.5%, sides 2%; landscape top 2%, sides 6%; bottom 4%. These are conservative layout margins, not hardware notch detection. Larger reported insets always win. The background still fills the full screen top; hook text remains in the protected area. Camera framing uses the same bounds. CTA anchors to the protected bottom edge with a fixed layout-space gap. Calculations run only at initialization or viewport/safe-area changes.
+
+Tests/ResponsiveLayoutChecks.cs reproduces the full-viewport report at 375x812, 390x844, 430x932, 600x1000 and 812x375. It verifies protected bounds preserve larger reported insets, rendered top background is white, and title/CTA rects fit inside the protected region. Native checks pass; these simulated renders are not actual browser/device validation.

@@ -53,7 +53,9 @@ namespace Playable.Editor
             Text subtitle = Label("Subtitle", flow.endCardSubtitle, font, 38, endCard.transform, new Vector2(0.5f, 0.49f), new Vector2(1000, 120));
             endCard.SetActive(false);
             RectTransform cta = NewRect("CTA", safeRoot);
-            cta.anchorMin = cta.anchorMax = new Vector2(0.5f, 0.065f);
+            cta.anchorMin = cta.anchorMax = new Vector2(0.5f, 0f);
+            cta.pivot = new Vector2(0.5f, 0f);
+            cta.anchoredPosition = new Vector2(0f, 32f);
             cta.sizeDelta = new Vector2(420, 145);
             RoundedButtonGraphic button = cta.gameObject.AddComponent<RoundedButtonGraphic>();
             button.color = new Color(0.02f, 0.58f, 0.94f);

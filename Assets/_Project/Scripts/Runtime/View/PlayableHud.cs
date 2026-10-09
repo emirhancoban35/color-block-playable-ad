@@ -55,11 +55,21 @@ namespace Playable.View
 
         public void Resize()
         {
-            Rect safe = Screen.safeArea;
+            Rect safe = GetSafeArea(Screen.width, Screen.height, Screen.safeArea);
             safeRoot.anchorMin = new Vector2(safe.xMin / Screen.width, safe.yMin / Screen.height);
             safeRoot.anchorMax = new Vector2(safe.xMax / Screen.width, safe.yMax / Screen.height);
             safeRoot.offsetMin = safeRoot.offsetMax = Vector2.zero;
             headerBackground.anchorMin = new Vector2(0f, safeRoot.anchorMax.y);
+        }
+        public static Rect GetSafeArea(int width, int height, Rect reported)
+        {
+            // Playworks 7.2 reports the full viewport, including the preview's notch overlay.
+            bool portrait = height >= width;
+            float side = width * (portrait ? 0.02f : 0.06f);
+            float top = height * (portrait ? 0.065f : 0.02f);
+            float bottom = height * 0.04f;
+            return Rect.MinMaxRect(Mathf.Max(reported.xMin, side), Mathf.Max(reported.yMin, bottom),
+                Mathf.Min(reported.xMax, width - side), Mathf.Min(reported.yMax, height - top));
         }
         public void Progress(int cleared, int total, int moves) { if (!progress.gameObject.activeSelf) return; progress.text = cleared + " / " + total + " CLEARED   ·   " + moves + " MOVES"; }
         public void Tutorial(bool visible) { if (instruction.gameObject.activeSelf != visible) instruction.gameObject.SetActive(visible); }

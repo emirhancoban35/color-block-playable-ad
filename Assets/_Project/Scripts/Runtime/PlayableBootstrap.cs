@@ -255,7 +255,8 @@ namespace Playable
         private void Resize()
         {
             screenWidth = Mathf.Max(1, Screen.width); screenHeight = Mathf.Max(1, Screen.height); safeArea = Screen.safeArea;
-            float safeWidth = Mathf.Max(1f, safeArea.width), safeHeight = Mathf.Max(1f, safeArea.height);
+            Rect usableSafe = PlayableHud.GetSafeArea(screenWidth, screenHeight, safeArea);
+            float safeWidth = Mathf.Max(1f, usableSafe.width), safeHeight = Mathf.Max(1f, usableSafe.height);
             float usableWidth = safeWidth / screenWidth * 0.9f;
             float usableHeight = safeHeight / screenHeight * 0.62f;
             float aspect = (float)screenWidth / screenHeight;
