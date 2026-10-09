@@ -58,8 +58,8 @@ namespace Playable.Editor
             const int segments = 6;
             for (int i = 0; i < segments; i++)
             {
-                float a = (corner * 90f + i * 90f / segments) * Mathf.Deg2Rad;
-                float b = (corner * 90f + (i + 1) * 90f / segments) * Mathf.Deg2Rad;
+                float a = (corner * 90f + 3f + i * 84f / segments) * Mathf.Deg2Rad;
+                float b = (corner * 90f + 3f + (i + 1) * 84f / segments) * Mathf.Deg2Rad;
                 Vector2 from = new Vector2(Mathf.Cos(a), Mathf.Sin(a));
                 Vector2 to = new Vector2(Mathf.Cos(b), Mathf.Sin(b));
                 if (!raised)

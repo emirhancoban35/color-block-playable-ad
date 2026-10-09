@@ -120,8 +120,8 @@ namespace Playable.Editor
                     if (open[i]) { i++; continue; }
                     int start = i++;
                     while (i < length && !open[i]) i++;
-                    float from = start - 0.5f - (start == 0 ? 0.12f : 0f);
-                    float to = i - 0.5f + (i == length ? 0.12f : 0f);
+                    float from = start - 0.5f + 0.02f;
+                    float to = i - 0.5f - 0.02f;
                     float center = (from + to) * 0.5f;
                     Vector2 position = horizontal
                         ? new Vector2(center, direction.y > 0 ? level.height - 0.25f : -0.75f)
@@ -136,7 +136,7 @@ namespace Playable.Editor
                     Vector2 center = new Vector2(x == 0 ? -0.5f : level.width - 0.5f,
                         y == 0 ? -0.5f : level.height - 0.5f);
                     int corner = y == 0 ? (x == 0 ? 2 : 3) : (x == 0 ? 1 : 0);
-                    mesh.RoundedCorner(center + new Vector2(0f, -0.14f), 0.5f, 0.01f, corner, 0.06f, color * 0.4f);
+                    mesh.RoundedCorner(center + new Vector2(0f, -0.065f), 0.5f, 0.01f, corner, 0.06f, color * 0.4f);
                     mesh.RoundedCorner(center, 0.5f, 0.01f, corner, -0.02f, color);
                     mesh.RoundedCorner(center + new Vector2(0f, 0.015f), 0.46f, 0.025f,
                         corner, -0.03f, Color.Lerp(color, Color.white, 0.06f), true);
@@ -145,7 +145,7 @@ namespace Playable.Editor
 
         private static void Wall(FlatMeshBuilder mesh, Vector2 center, float width, float height, Color color)
         {
-            mesh.RoundedRect(center + new Vector2(0f, -0.14f), width, height, 0.16f, 0.06f, color * 0.4f);
+            mesh.RoundedRect(center + new Vector2(0f, -0.065f), width, height, 0.16f, 0.06f, color * 0.4f);
             mesh.RoundedRect(center, width, height, 0.16f, -0.02f, color);
             mesh.RoundedRect(center + new Vector2(0f, 0.015f), width - 0.06f, height - 0.06f,
                 0.12f, -0.03f, Color.Lerp(color, Color.white, 0.06f), true);
