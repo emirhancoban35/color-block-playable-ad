@@ -38,7 +38,22 @@ namespace Playable.Editor
             }
             Undo.RecordObject(bootstrap, "Select playable variant");
             var board = BoardSceneBuilder.Build(variant, bootstrap);
-            bootstrap.Configure(variant, Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"), board);
+            if (bootstrap.BoardCamera != null) Undo.DestroyObjectImmediate(bootstrap.BoardCamera.gameObject);
+            if (bootstrap.Hud != null) Undo.DestroyObjectImmediate(bootstrap.Hud.gameObject);
+            Camera camera = new GameObject("Board Camera", typeof(Camera)).GetComponent<Camera>();
+            camera.transform.SetParent(bootstrap.transform, false);
+            camera.orthographic = true;
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = variant.visualTheme.backgroundColor;
+            camera.nearClipPlane = 0.1f;
+            camera.farClipPlane = 30f;
+            camera.orthographicSize = Mathf.Max(variant.levelConfig.height, variant.levelConfig.width) * 0.5f + 1f;
+            camera.transform.localPosition = new Vector3((variant.levelConfig.width - 1) * 0.5f,
+                (variant.levelConfig.height - 1) * 0.5f, -10f);
+            Undo.RegisterCreatedObjectUndo(camera.gameObject, "Prepare camera");
+            var hud = HudSceneBuilder.Build(Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"), variant.adFlowConfig, bootstrap.transform);
+            Undo.RegisterCreatedObjectUndo(hud.gameObject, "Prepare HUD");
+            bootstrap.Configure(variant, board, camera, hud);
             EditorUtility.SetDirty(bootstrap);
             Directory.CreateDirectory("Assets/_Project/Scenes");
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -80,6 +95,17 @@ namespace Playable.Editor
             Prepare(variant);
             if (previous != null || bootstrap.GetComponentsInChildren<Playable.View.BoardView>().Length != 1)
                 throw new InvalidOperationException("Rebuild left a duplicate board.");
+            if (bootstrap.GetComponentsInChildren<Camera>(true).Length != 1 || bootstrap.BoardCamera == null ||
+                bootstrap.GetComponentsInChildren<Playable.View.PlayableHud>(true).Length != 1 || bootstrap.Hud == null)
+                throw new InvalidOperationException("Prepared camera and HUD must be unique and referenced.");
+            var ctaText = bootstrap.Hud.transform.Find("Safe Area/CTA/CTA Text").GetComponent<UnityEngine.UI.Text>();
+            string originalCta = variant.adFlowConfig.ctaText;
+            variant.adFlowConfig.ctaText = "OVERRIDE CHECK";
+            bootstrap.Hud.Initialize(variant.adFlowConfig);
+            bool overrideApplied = ctaText.text == "OVERRIDE CHECK";
+            variant.adFlowConfig.ctaText = originalCta;
+            bootstrap.Hud.Initialize(variant.adFlowConfig);
+            if (!overrideApplied) throw new InvalidOperationException("Prepared HUD must apply runtime flow overrides.");
             if (manualObject == null || manualObject.transform.parent != bootstrap.transform)
                 throw new InvalidOperationException("Rebuild removed a manually placed object.");
             if (bootstrap.BoardView.BlockCount != variant.levelConfig.blocks.Count)

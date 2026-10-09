@@ -12,13 +12,12 @@ namespace Playable
     public sealed class PlayableBootstrap : MonoBehaviour
     {
         [SerializeField] private PlayableVariantConfig variant;
-        [SerializeField] private Font uiFont;
         [SerializeField] private BoardView view;
         private GridBoard board;
-        private PlayableHud hud;
+        [SerializeField] private PlayableHud hud;
         private PlayablePlatform platform;
         private AdSession session;
-        private Camera boardCamera;
+        [SerializeField] private Camera boardCamera;
         private int selected = -1, escaping = -1;
         private Vector2 grabOffset;
         private Vector3 escapeStart, escapeTarget;
@@ -29,11 +28,14 @@ namespace Playable
 
         public PlayableVariantConfig Variant { get { return variant; } }
         public BoardView BoardView { get { return view; } }
+        public PlayableHud Hud { get { return hud; } }
+        public Camera BoardCamera { get { return boardCamera; } }
 #if UNITY_EDITOR
-        public void Configure(PlayableVariantConfig config, Font font, BoardView boardView)
+        public void Configure(PlayableVariantConfig config, BoardView boardView, Camera camera, PlayableHud preparedHud)
         {
             variant = config;
-            uiFont = font;
+            boardCamera = camera;
+            hud = preparedHud;
             view = boardView;
         }
 #endif
@@ -48,15 +50,8 @@ namespace Playable
             var level = variant.levelConfig;
             board = new GridBoard(level.width, level.height, level.cells.ToArray(), level.blocks.ToArray(), level.exits.ToArray());
             session = new AdSession(variant.adFlowConfig);
-            GameObject cameraObject = new GameObject("Board Camera", typeof(Camera));
-            cameraObject.transform.SetParent(transform, false);
-            boardCamera = cameraObject.GetComponent<Camera>();
-            boardCamera.orthographic = true;
-            boardCamera.clearFlags = CameraClearFlags.SolidColor;
             boardCamera.backgroundColor = variant.visualTheme.backgroundColor;
-            boardCamera.nearClipPlane = 0.1f; boardCamera.farClipPlane = 30f;
-            boardCamera.transform.localPosition = new Vector3((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f, -10f);
-            hud = new PlayableHud(uiFont, variant.adFlowConfig, transform);
+            hud.Initialize(variant.adFlowConfig);
             hud.Progress(0, board.BlockCount, 0);
             Input.simulateMouseWithTouches = true;
             Application.targetFrameRate = 60;
@@ -194,7 +189,6 @@ namespace Playable
         private void OnDestroy()
         {
             if (platform != null) { platform.PauseChanged -= SetPaused; platform.Dispose(); }
-            if (hud != null) hud.Dispose();
         }
     }
 }
