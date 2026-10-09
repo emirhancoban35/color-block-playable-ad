@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Theme_Showcase
   m_EditorClassIdentifier: 
   backgroundColor: {r: 0.83, g: 0.9, b: 1, a: 1}
-  boardColor: {r: 0.27, g: 0.33, b: 0.43, a: 1}
-  borderColor: {r: 1, g: 0.16, b: 0.2, a: 1}
+  boardColorId: 8
+  borderColorId: 0
   cellGap: 0.11
   cornerRadius: 0.25
   showStuds: 1
@@ -36,3 +36,7 @@ MonoBehaviour:
     color: {r: 0.18, g: 1, b: 0.9, a: 1}
   - colorId: 7
     color: {r: 1, g: 0.42, b: 0.91, a: 1}
+  - colorId: 8
+    color: {r: 0.27, g: 0.33, b: 0.43, a: 1}
+  - colorId: 9
+    color: {r: 0.19, g: 0.23, b: 0.34, a: 1}

@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Theme_Default
   m_EditorClassIdentifier: 
   backgroundColor: {r: 0.83, g: 0.9, b: 1, a: 1}
-  boardColor: {r: 0.39, g: 0.46, b: 0.62, a: 1}
-  borderColor: {r: 0.19, g: 0.23, b: 0.34, a: 1}
+  boardColorId: 8
+  borderColorId: 9
   cellGap: 0.06
   cornerRadius: 0.2
   showStuds: 1

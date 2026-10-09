@@ -219,8 +219,8 @@ namespace Playable
                     escapeDirection = direction;
                     burstOrigin = view.BlockCenter(selected);
                     burstOrigin.z = -0.3f;
-                    if (direction.x != 0) burstOrigin.x = direction.x > 0 ? board.Width - 0.3f : -0.7f;
-                    else burstOrigin.y = direction.y > 0 ? board.Height - 0.3f : -0.7f;
+                    if (direction.x != 0) burstOrigin.x = direction.x > 0 ? board.Width - 0.25f : -0.75f;
+                    else burstOrigin.y = direction.y > 0 ? board.Height - 0.25f : -0.75f;
                     escapeStart = GridMath.GridToWorld(board.Origin(selected), 1f, -0.15f);
                     int travel = 1;
                     for (int c = 0; c < board.CellCount(selected); c++)

@@ -7,8 +7,8 @@ namespace Data.Theme
     public class VisualThemeConfig : ScriptableObject
     {
         public Color backgroundColor = new Color(0.83f, 0.9f, 1f);
-        public Color boardColor = new Color(0.39f, 0.46f, 0.62f);
-        public Color borderColor = new Color(0.19f, 0.23f, 0.34f);
+        public Data.Core.ColorId boardColorId = Data.Core.ColorId.Slate;
+        public Data.Core.ColorId borderColorId = Data.Core.ColorId.Navy;
         [Range(0.02f, 0.15f)] public float cellGap = 0.06f;
         [Range(0.01f, 0.28f)] public float cornerRadius = 0.2f;
         public bool showStuds = true;
@@ -28,7 +28,9 @@ namespace Data.Theme
                 case Data.Core.ColorId.Purple: return new Color(0.68f, 0.32f, 1f);
                 case Data.Core.ColorId.Orange: return new Color(1f, 0.53f, 0.1f);
                 case Data.Core.ColorId.Cyan: return new Color(0.06f, 0.92f, 0.86f);
-                default: return new Color(1f, 0.32f, 0.78f);
+                case Data.Core.ColorId.Pink: return new Color(1f, 0.32f, 0.78f);
+                case Data.Core.ColorId.Slate: return new Color(0.39f, 0.46f, 0.62f);
+                default: return new Color(0.19f, 0.23f, 0.34f);
             }
         }
     }

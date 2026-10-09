@@ -9,6 +9,8 @@ namespace Data.Core
         Purple,
         Orange,
         Cyan,
-        Pink
+        Pink,
+        Slate,
+        Navy
     }
 }
