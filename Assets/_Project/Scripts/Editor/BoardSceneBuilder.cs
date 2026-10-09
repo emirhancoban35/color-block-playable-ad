@@ -31,9 +31,8 @@ namespace Playable.Editor
             root.transform.SetParent(bootstrap.transform, false);
 
             FlatMeshBuilder background = new FlatMeshBuilder();
-            background.Tile(new Vector2((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f),
-                -board.Width * 0.5f - 0.35f, board.Width * 0.5f + 0.35f,
-                -board.Height * 0.5f - 0.35f, board.Height * 0.5f + 0.35f, 0.3f, theme.borderColor, depth: 0.5f);
+            background.RoundedRect(new Vector2((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f),
+                board.Width + 0.7f, board.Height + 0.7f, 0.3f, 0.5f, theme.borderColor);
             for (int y = 0; y < board.Height; y++)
                 for (int x = 0; x < board.Width; x++)
                 {

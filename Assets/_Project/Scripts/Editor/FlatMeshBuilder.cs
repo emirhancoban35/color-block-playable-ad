@@ -38,6 +38,12 @@ namespace Playable.Editor
             Quad(new Vector2(x, y), new Vector2(x + width, y), new Vector2(x + width, y + height), new Vector2(x, y + height), z, color);
         }
 
+        public void RoundedRect(Vector2 center, float width, float height, float radius, float z, Color color)
+        {
+            Fill(Outline(-width * 0.5f, width * 0.5f, -height * 0.5f, height * 0.5f,
+                radius, false, false, false, false), center, z, color, false);
+        }
+
         public void Arrow(Vector2 center, Vector2 direction, Color color)
         {
             Vector2 side = new Vector2(-direction.y, direction.x) * 0.13f;
