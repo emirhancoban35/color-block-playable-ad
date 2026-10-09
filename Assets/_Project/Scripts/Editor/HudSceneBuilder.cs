@@ -31,12 +31,8 @@ namespace Playable.Editor
             RectTransform instruction = NewRect("Instruction", safeRoot);
             instruction.anchorMin = instruction.anchorMax = new Vector2(0.5f, 0.145f);
             instruction.sizeDelta = new Vector2(950, 115);
-            Image instructionBackground = instruction.gameObject.AddComponent<Image>();
-            instructionBackground.color = Color.white;
-            instructionBackground.raycastTarget = false;
-            Text tutorial = Label("Tutorial", flow.tutorialText, displayFont, 42, instruction, new Vector2(0.5f, 0.5f), new Vector2(920, 100));
-            tutorial.fontStyle = FontStyle.Normal;
-            tutorial.color = title.color;
+            Text tutorial = Label("Tutorial", flow.tutorialText, displayFont, 54, instruction, new Vector2(0.5f, 0.5f), new Vector2(920, 110));
+            Outlined(tutorial);
             GameObject endCard = new GameObject("End Card", typeof(RectTransform), typeof(Image));
             endCard.transform.SetParent(safeRoot, false);
             Stretch(endCard.GetComponent<RectTransform>());
@@ -47,20 +43,26 @@ namespace Playable.Editor
             endCard.SetActive(false);
             RectTransform cta = NewRect("CTA", safeRoot);
             cta.anchorMin = cta.anchorMax = new Vector2(0.5f, 0.065f);
-            cta.sizeDelta = new Vector2(690, 130);
-            Image button = cta.gameObject.AddComponent<Image>();
+            cta.sizeDelta = new Vector2(420, 145);
+            RoundedButtonGraphic button = cta.gameObject.AddComponent<RoundedButtonGraphic>();
             button.color = new Color(0.02f, 0.58f, 0.94f);
             button.raycastTarget = false;
-            Text ctaText = Label("CTA Text", flow.ctaText, displayFont, 60, cta, new Vector2(0.5f, 0.5f), new Vector2(670, 120));
+            Text ctaText = Label("CTA Text", flow.ctaText, displayFont, 66, cta, new Vector2(0.5f, 0.5f), new Vector2(400, 130));
             cta.gameObject.SetActive(flow.ctaMode == Data.Core.CtaMode.PersistentButton);
             instruction.gameObject.SetActive(false);
             PlayableHud hud = root.AddComponent<PlayableHud>();
-            ctaText.fontStyle = FontStyle.Normal;
-            Outline lettering = ctaText.gameObject.AddComponent<Outline>();
-            lettering.effectColor = new Color(0.04f, 0.08f, 0.12f);
-            lettering.effectDistance = new Vector2(3f, -3f);
+            Outlined(ctaText);
             hud.Configure(safeRoot, progress, tutorial, endCard, endTitle, subtitle, cta, ctaText, title, instruction);
             return hud;
+        }
+
+        private static void Outlined(Text text)
+        {
+            text.fontStyle = FontStyle.Normal;
+            text.color = Color.white;
+            Outline outline = text.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(0.025f, 0.035f, 0.055f);
+            outline.effectDistance = new Vector2(5f, -5f);
         }
 
         private static RectTransform NewRect(string name, Transform parent)
