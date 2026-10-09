@@ -27,6 +27,10 @@ namespace Data.Flow
         
         [Header("Texts")]
 #if PLAYWORKS_SDK
+        [LunaPlaygroundField("Hook Text", 3, "Texts")]
+#endif
+        public string hookText = "Can you clear the board?";
+#if PLAYWORKS_SDK
         [LunaPlaygroundField("Tutorial Text", 1, "Texts")]
 #endif
         public string tutorialText = "Drag to escape!";

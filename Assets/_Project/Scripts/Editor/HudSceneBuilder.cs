@@ -17,11 +17,25 @@ namespace Playable.Editor
             scaler.referenceResolution = new Vector2(1080, 1920);
             scaler.matchWidthOrHeight = 0.5f;
             RectTransform safeRoot = NewRect("Safe Area", root.transform);
-            Text title = Label("Title", "COLOR ESCAPE", font, 66, safeRoot, new Vector2(0.5f, 0.92f), new Vector2(1000, 110));
-            title.color = new Color(0.17f, 0.19f, 0.3f);
+            RectTransform header = NewRect("Header", safeRoot);
+            header.anchorMin = header.anchorMax = new Vector2(0.5f, 0.945f);
+            header.sizeDelta = new Vector2(1080, 170);
+            Image headerBackground = header.gameObject.AddComponent<Image>();
+            headerBackground.color = Color.white;
+            headerBackground.raycastTarget = false;
+            Text title = Label("Title", flow.hookText, font, 64, header, new Vector2(0.5f, 0.5f), new Vector2(1000, 145));
+            title.fontStyle = FontStyle.Bold;
+            title.color = new Color(0.03f, 0.3f, 0.65f);
             Text progress = Label("Progress", "", font, 38, safeRoot, new Vector2(0.5f, 0.86f), new Vector2(900, 70));
             progress.color = title.color;
-            Text tutorial = Label("Tutorial", flow.tutorialText, font, 40, safeRoot, new Vector2(0.5f, 0.19f), new Vector2(1000, 90));
+            RectTransform instruction = NewRect("Instruction", safeRoot);
+            instruction.anchorMin = instruction.anchorMax = new Vector2(0.5f, 0.19f);
+            instruction.sizeDelta = new Vector2(950, 115);
+            Image instructionBackground = instruction.gameObject.AddComponent<Image>();
+            instructionBackground.color = Color.white;
+            instructionBackground.raycastTarget = false;
+            Text tutorial = Label("Tutorial", flow.tutorialText, font, 42, instruction, new Vector2(0.5f, 0.5f), new Vector2(920, 100));
+            tutorial.fontStyle = FontStyle.Bold;
             tutorial.color = title.color;
             GameObject endCard = new GameObject("End Card", typeof(RectTransform), typeof(Image));
             endCard.transform.SetParent(safeRoot, false);
@@ -35,13 +49,14 @@ namespace Playable.Editor
             cta.anchorMin = cta.anchorMax = new Vector2(0.5f, 0.085f);
             cta.sizeDelta = new Vector2(690, 130);
             Image button = cta.gameObject.AddComponent<Image>();
-            button.color = new Color(0.28f, 0.75f, 0.13f);
+            button.color = new Color(0.02f, 0.58f, 0.94f);
             button.raycastTarget = false;
             Text ctaText = Label("CTA Text", flow.ctaText, font, 55, cta, new Vector2(0.5f, 0.5f), new Vector2(670, 120));
             cta.gameObject.SetActive(flow.ctaMode == Data.Core.CtaMode.PersistentButton);
-            tutorial.gameObject.SetActive(false);
+            instruction.gameObject.SetActive(false);
             PlayableHud hud = root.AddComponent<PlayableHud>();
-            hud.Configure(safeRoot, progress, tutorial, endCard, endTitle, subtitle, cta, ctaText);
+            ctaText.fontStyle = FontStyle.Bold;
+            hud.Configure(safeRoot, progress, tutorial, endCard, endTitle, subtitle, cta, ctaText, title, instruction);
             return hud;
         }
 

@@ -120,6 +120,7 @@ namespace Playable
                     platform.GameEnded(session.Won, showCard);
                 }
             }
+            hud.TickVisuals(dt, selected < 0 && escaping < 0 && !view.BurstPlaying);
             hud.Tutorial(flow.showTutorial && !interacted && session.Elapsed >= flow.tutorialDelay && !session.Ended);
             hud.Cta(flow.ctaMode == CtaMode.PersistentButton || (flow.ctaMode == CtaMode.DelayedButton && session.Elapsed >= flow.ctaDelay) || presented);
         }
