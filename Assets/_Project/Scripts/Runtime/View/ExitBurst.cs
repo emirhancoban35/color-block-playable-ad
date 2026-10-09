@@ -25,7 +25,7 @@ namespace Playable.View
         public void Begin(Vector3 origin, Vector2 direction, Color color, float seconds)
         {
             elapsed = 0f;
-            duration = seconds;
+            duration = Mathf.Max(0.5f, seconds * 2.5f);
             IsPlaying = true;
             Color tint = QualitySettings.activeColorSpace == ColorSpace.Linear ? color.linear : color;
             properties.SetVector("_Color", tint);
@@ -33,13 +33,13 @@ namespace Playable.View
             for (int i = 0; i < pieces.Length; i++)
             {
                 float spread = (i - (pieces.Length - 1) * 0.5f) / pieces.Length;
-                velocities[i] = (Vector3)(direction * (2.8f + (i % 3) * 0.7f) + side * spread * 5f);
-                pieces[i].localPosition = origin + (Vector3)(side * spread * 0.8f);
+                velocities[i] = (Vector3)(direction * (4.5f + (i % 3) * 1.2f) + side * spread * 7f);
+                pieces[i].localPosition = origin + (Vector3)(side * spread * 1.6f);
                 pieces[i].localRotation = Quaternion.Euler(0f, 0f, i * 47f);
-                pieces[i].localScale = Vector3.one * (0.8f + (i % 3) * 0.2f);
+                pieces[i].localScale = Vector3.one * (2f + (i % 3) * 0.4f);
                 // All fragments intentionally share one immutable tint during this burst.
                 renderers[i].SetPropertyBlock(properties);
-                pieces[i].gameObject.SetActive(true);
+                renderers[i].enabled = true;
             }
         }
         public void Tick(float dt)
@@ -51,8 +51,8 @@ namespace Playable.View
             {
                 pieces[i].localPosition += velocities[i] * dt;
                 pieces[i].localRotation = Quaternion.Euler(0f, 0f, i * 47f + elapsed * (i % 2 == 0 ? 430f : -430f));
-                pieces[i].localScale = Vector3.one * (0.8f + (i % 3) * 0.2f) * (1f - t * t);
-                if (t >= 1f) pieces[i].gameObject.SetActive(false);
+                pieces[i].localScale = Vector3.one * (2f + (i % 3) * 0.4f) * (1f - t * t);
+                if (t >= 1f) renderers[i].enabled = false;
             }
             if (t >= 1f) IsPlaying = false;
         }

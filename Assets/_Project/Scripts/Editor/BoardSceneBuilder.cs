@@ -89,11 +89,11 @@ namespace Playable.Editor
                 fragmentMesh = fragment.Build("Exit fragment");
                 AssetDatabase.CreateAsset(fragmentMesh, fragmentPath);
             }
-            Transform[] pieces = new Transform[8];
+            Transform[] pieces = new Transform[12];
             for (int i = 0; i < pieces.Length; i++)
             {
                 pieces[i] = MakeMesh("Fragment " + i, fragmentMesh, theme.sharedMaterial, burstRoot.transform);
-                pieces[i].gameObject.SetActive(false);
+                pieces[i].GetComponent<MeshRenderer>().enabled = false;
             }
             burst.Configure(pieces);
             view.Configure(blocks, colors, outline.GetComponent<MeshFilter>(), burst);
@@ -156,7 +156,7 @@ namespace Playable.Editor
             List<Vector2Int> cells = new List<Vector2Int>();
             for (int i = 0; i < board.CellCount(block); i++) cells.Add(board.LocalCell(block, i));
             cells.Sort((a, b) => a.y == b.y ? a.x.CompareTo(b.x) : a.y.CompareTo(b.y));
-            StringBuilder key = new StringBuilder("2;");
+            StringBuilder key = new StringBuilder("3;");
             foreach (Vector2Int cell in cells) key.Append(cell.x).Append(',').Append(cell.y).Append(';');
             key.Append(theme.cellGap.ToString("R", CultureInfo.InvariantCulture)).Append(';')
                 .Append(theme.cornerRadius.ToString("R", CultureInfo.InvariantCulture)).Append(';').Append(theme.showStuds);

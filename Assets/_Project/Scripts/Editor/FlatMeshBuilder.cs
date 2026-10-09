@@ -145,12 +145,35 @@ namespace Playable.Editor
 
         public Mesh Build(string name)
         {
+            // Keep color boundaries; remove only duplicate vertices and zero-area triangles.
+            var compactVertices = new List<Vector3>();
+            var compactColors = new List<Color32>();
+            var compactTriangles = new List<int>();
+            var shared = new Dictionary<(Vector3, Color32), int>();
+            for (int t = 0; t < triangles.Count; t += 3)
+            {
+                Vector3 a = vertices[triangles[t]], b = vertices[triangles[t + 1]], c = vertices[triangles[t + 2]];
+                if (Vector3.Cross(b - a, c - a).sqrMagnitude <= 0.000000000001f) continue;
+                for (int corner = 0; corner < 3; corner++)
+                {
+                    int source = triangles[t + corner];
+                    var key = (vertices[source], colors[source]);
+                    if (!shared.TryGetValue(key, out int index))
+                    {
+                        index = compactVertices.Count;
+                        shared.Add(key, index);
+                        compactVertices.Add(key.Item1);
+                        compactColors.Add(key.Item2);
+                    }
+                    compactTriangles.Add(index);
+                }
+            }
             Mesh mesh = new Mesh();
             mesh.name = name;
-            if (vertices.Count > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-            mesh.vertices = vertices.ToArray();
-            mesh.colors32 = colors.ToArray();
-            mesh.triangles = triangles.ToArray();
+            if (compactVertices.Count > 65535) mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            mesh.vertices = compactVertices.ToArray();
+            mesh.colors32 = compactColors.ToArray();
+            mesh.triangles = compactTriangles.ToArray();
             mesh.RecalculateBounds();
             return mesh;
         }

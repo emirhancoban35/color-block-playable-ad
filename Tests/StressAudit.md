@@ -29,3 +29,17 @@ Run `sh Tests/run_core_tests.sh`. In an isolated Unity verification copy, copy T
 ## Remaining device validation
 
 No real-device/browser FPS, frame time, actual draw calls or external store navigation was measured in this audit. The denser variant adds renderers and submitted geometry even though shared meshes keep download size low. Test the final ZIP in Playworks on a low-end target device before delivery; choose the preserved 20-block variant if it misses the target frame budget. Shared material and mesh do not guarantee a single draw call, particularly with per-renderer color overrides. No claim of an absolute minimum build size is made.
+
+## Follow-up: compact geometry and stronger exit fragments
+
+Vertex/color welding and zero-area triangle removal run only in the editor. Shape cache version is bumped so existing assets cannot conceal the new geometry. Shared shape: 596 → 298 vertices. Visible idle geometry: 54,386 → 30,298 vertices (44.3% reduction); 41,784 → 29,032 triangles (30.5% reduction). Colors and rounded outlines are retained.
+
+Exit fragments use 12 editor-prepared active objects with disabled renderers at rest, rather than inactive GameObjects. Burst duration is at least 0.5 seconds (0.6 for the current configuration), with larger pieces and more travel. This avoids relying on inactive object activation in the browser, but is not proof of the cause of the previous missing effect. Native Unity renderer visibility, lifetime, cleanup and reuse pass. Actual JavaScript visual confirmation remains required: the available in-app browser could not connect to the localhost preview.
+
+Core tests, complete level solution, idle hints, flow, shared meshes, selected-block lift/release and reused effects pass after compaction. Stress allocation measurements remain zero for all three measured loops. The particle category in Playworks does not describe this effect; it uses MeshRenderers, not ParticleSystem.
+
+To recheck the renderer pool, copy Tests/BurstVisibilityChecks.cs into the isolated verification project's Editor folder and run BurstVisibilityChecks.Run after preparing the scene.
+
+Native before/after comparison of 257,640 board pixels is identical (maximum RGB delta 0/255). This confirms the tested view retains its appearance after compaction.
+
+Follow-up Playworks content size: 567,196 bytes (553.90 KiB). ZIP container: 1,456,719 bytes. Full pipeline and empty health report confirmed; ZIP CRC passes.
