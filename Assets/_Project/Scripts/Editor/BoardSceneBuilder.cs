@@ -26,6 +26,7 @@ namespace Playable.Editor
 
             var level = variant.levelConfig;
             var theme = variant.visualTheme;
+            bool shaped = level.cells.Exists(cell => !cell.isActive);
             Color boardColor = theme.GetColor(theme.boardColorId);
             Color borderColor = theme.GetColor(theme.borderColorId);
             GridBoard board = new GridBoard(level.width, level.height, level.cells.ToArray(), level.blocks.ToArray(), level.exits.ToArray());
@@ -33,13 +34,15 @@ namespace Playable.Editor
             root.transform.SetParent(bootstrap.transform, false);
 
             FlatMeshBuilder background = new FlatMeshBuilder();
-            background.RoundedRect(new Vector2((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f),
-                board.Width + 0.7f, board.Height + 0.7f, 0.3f, 0.5f, boardColor * 0.8f);
+            if (!shaped)
+                background.RoundedRect(new Vector2((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f),
+                    board.Width + 0.7f, board.Height + 0.7f, 0.3f, 0.5f, boardColor * 0.8f);
             for (int y = 0; y < board.Height; y++)
                 for (int x = 0; x < board.Width; x++)
                 {
                     Vector2Int cell = new Vector2Int(x, y);
                     if (!board.IsActive(cell)) continue;
+                    if (shaped) background.Rect(x - 0.5f, y - 0.5f, 1f, 1f, 0.5f, boardColor * 0.8f);
                     if (board.IsBlocked(cell))
                         Wall(background, cell, 0.96f, 0.96f, borderColor);
                     else
@@ -48,7 +51,8 @@ namespace Playable.Editor
                             0.94f, 0.93f, 0.07f, -0.01f, boardColor);
                     }
                 }
-            BuildWalls(background, level, borderColor);
+            if (shaped) BuildShapedWalls(background, board, level, borderColor);
+            else BuildWalls(background, level, borderColor);
             foreach (var gate in level.exits)
             {
                 Vector2Int direction = ExitSideUtility.ToDirection(gate.side);
@@ -135,6 +139,53 @@ namespace Playable.Editor
                     Vector2 center = new Vector2(x == 0 ? -0.5f : level.width - 0.5f,
                         y == 0 ? -0.5f : level.height - 0.5f);
                     int corner = y == 0 ? (x == 0 ? 2 : 3) : (x == 0 ? 1 : 0);
+                    mesh.RoundedCorner(center + new Vector2(0f, -0.065f), 0.5f, 0.01f, corner, 0.06f, color * 0.4f);
+                    mesh.RoundedCorner(center, 0.5f, 0.01f, corner, -0.02f, color);
+                    mesh.RoundedCorner(center + new Vector2(0f, 0.015f), 0.46f, 0.025f,
+                        corner, -0.03f, Color.Lerp(color, Color.white, 0.06f), true);
+                }
+        }
+
+        private static void BuildShapedWalls(FlatMeshBuilder mesh, GridBoard board, Data.Level.LevelConfig level, Color color)
+        {
+            for (int side = 0; side < 4; side++)
+            {
+                var edge = (Data.Core.ExitSide)side;
+                Vector2Int direction = ExitSideUtility.ToDirection(edge);
+                bool horizontal = direction.y != 0;
+                int lines = horizontal ? board.Height : board.Width;
+                int length = horizontal ? board.Width : board.Height;
+                for (int line = 0; line < lines; line++)
+                {
+                    int start = -1;
+                    for (int i = 0; i <= length; i++)
+                    {
+                        Vector2Int cell = horizontal ? new Vector2Int(i, line) : new Vector2Int(line, i);
+                        bool boundary = i < length && board.IsActive(cell) && !board.IsActive(cell + direction);
+                        if (boundary && !board.Inside(cell + direction))
+                            foreach (var gate in level.exits)
+                                if (gate.side == edge && i >= gate.startIndex && i < gate.startIndex + gate.length)
+                                    boundary = false;
+                        if (boundary && start < 0) start = i;
+                        if (boundary || start < 0) continue;
+                        float middle = (start + i - 1) * 0.5f;
+                        Vector2 center = (horizontal ? new Vector2(middle, line) : new Vector2(line, middle)) + (Vector2)direction * 0.75f;
+                        Wall(mesh, center, horizontal ? i - start - 0.06f : 0.5f,
+                            horizontal ? 0.5f : i - start - 0.06f, color);
+                        start = -1;
+                    }
+                }
+            }
+            for (int y = 0; y <= board.Height; y++)
+                for (int x = 0; x <= board.Width; x++)
+                {
+                    bool bl = board.IsActive(new Vector2Int(x - 1, y - 1));
+                    bool br = board.IsActive(new Vector2Int(x, y - 1));
+                    bool tr = board.IsActive(new Vector2Int(x, y));
+                    bool tl = board.IsActive(new Vector2Int(x - 1, y));
+                    if ((bl ? 1 : 0) + (br ? 1 : 0) + (tr ? 1 : 0) + (tl ? 1 : 0) != 1) continue;
+                    int corner = bl ? 0 : br ? 1 : tr ? 2 : 3;
+                    Vector2 center = new Vector2(x - 0.5f, y - 0.5f);
                     mesh.RoundedCorner(center + new Vector2(0f, -0.065f), 0.5f, 0.01f, corner, 0.06f, color * 0.4f);
                     mesh.RoundedCorner(center, 0.5f, 0.01f, corner, -0.02f, color);
                     mesh.RoundedCorner(center + new Vector2(0f, 0.015f), 0.46f, 0.025f,
