@@ -37,7 +37,8 @@ namespace Playable.Editor
                 bootstrap = root.AddComponent<PlayableBootstrap>();
             }
             Undo.RecordObject(bootstrap, "Select playable variant");
-            bootstrap.Configure(variant, Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"));
+            var board = BoardSceneBuilder.Build(variant, bootstrap);
+            bootstrap.Configure(variant, Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf"), board);
             EditorUtility.SetDirty(bootstrap);
             Directory.CreateDirectory("Assets/_Project/Scenes");
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -57,10 +58,38 @@ namespace Playable.Editor
                 var errors = VariantValidator.Validate(item);
                 if (errors.Count > 0) throw new InvalidOperationException(string.Join("\n", errors.ToArray()));
             }
+            VerifyBoardRebuild();
             Shader shader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Shaders/VertexColor.shader");
             foreach (var message in ShaderUtil.GetShaderMessages(shader))
                 if (message.severity == UnityEditor.Rendering.ShaderCompilerMessageSeverity.Error) throw new InvalidOperationException(message.message);
-            Debug.Log("COLOR_BLOCK_VERIFIED: variants, scene generation and shader import passed.");
+            Debug.Log("COLOR_BLOCK_VERIFIED: variants, board rebuild, shared meshes and shader import passed.");
+        }
+
+        private static void VerifyBoardRebuild()
+        {
+            Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+            PlayableBootstrap bootstrap = scene.GetRootGameObjects()[0].GetComponent<PlayableBootstrap>();
+            PlayableVariantConfig variant = bootstrap.Variant;
+            var previous = bootstrap.BoardView;
+            MaterialPropertyBlock tint = new MaterialPropertyBlock();
+            previous.transform.Find("red").GetComponent<MeshRenderer>().GetPropertyBlock(tint);
+            if (tint.GetColor("_Color") != variant.visualTheme.GetColor(Data.Core.ColorId.Red))
+                throw new InvalidOperationException("Block colors were not restored after reopening the scene.");
+            GameObject manualObject = new GameObject("Manual object");
+            manualObject.transform.SetParent(bootstrap.transform, false);
+            Prepare(variant);
+            if (previous != null || bootstrap.GetComponentsInChildren<Playable.View.BoardView>().Length != 1)
+                throw new InvalidOperationException("Rebuild left a duplicate board.");
+            if (manualObject == null || manualObject.transform.parent != bootstrap.transform)
+                throw new InvalidOperationException("Rebuild removed a manually placed object.");
+            if (bootstrap.BoardView.BlockCount != variant.levelConfig.blocks.Count)
+                throw new InvalidOperationException("Prepared block count does not match the level.");
+            MeshFilter blue = bootstrap.BoardView.transform.Find("blue").GetComponent<MeshFilter>();
+            MeshFilter purple = bootstrap.BoardView.transform.Find("purple").GetComponent<MeshFilter>();
+            if (blue.sharedMesh != purple.sharedMesh || !EditorUtility.IsPersistent(blue.sharedMesh))
+                throw new InvalidOperationException("Equal shapes must share a persistent mesh.");
+            UnityEngine.Object.DestroyImmediate(manualObject);
+            EditorSceneManager.SaveScene(scene);
         }
     }
 }

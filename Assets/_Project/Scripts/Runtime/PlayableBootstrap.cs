@@ -13,8 +13,8 @@ namespace Playable
     {
         [SerializeField] private PlayableVariantConfig variant;
         [SerializeField] private Font uiFont;
+        [SerializeField] private BoardView view;
         private GridBoard board;
-        private BoardView view;
         private PlayableHud hud;
         private PlayablePlatform platform;
         private AdSession session;
@@ -28,25 +28,25 @@ namespace Playable
         private Rect safeArea;
 
         public PlayableVariantConfig Variant { get { return variant; } }
-        public void Configure(PlayableVariantConfig config, Font font) { variant = config; uiFont = font; }
+        public BoardView BoardView { get { return view; } }
+#if UNITY_EDITOR
+        public void Configure(PlayableVariantConfig config, Font font, BoardView boardView)
+        {
+            variant = config;
+            uiFont = font;
+            view = boardView;
+        }
+#endif
 
         private void Start()
         {
-            if (variant == null || variant.levelConfig == null || variant.visualTheme == null || variant.adFlowConfig == null ||
-                variant.visualTheme.sharedMaterial == null || uiFont == null)
-            {
-                Debug.LogError("Playable configuration is incomplete. Prepare the scene with Tools > Color Block > Framework.");
-                enabled = false;
-                return;
-            }
             platform = new PlayablePlatform();
 #if !UNITY_EDITOR
             if (!platform.IsAvailable) { Debug.LogError("Playworks SDK is required for a release build."); enabled = false; return; }
 #endif
             platform.PauseChanged += SetPaused;
             var level = variant.levelConfig;
-            try { board = new GridBoard(level.width, level.height, level.cells.ToArray(), level.blocks.ToArray(), level.exits.ToArray()); }
-            catch (System.ArgumentException error) { Debug.LogError(error.Message); enabled = false; return; }
+            board = new GridBoard(level.width, level.height, level.cells.ToArray(), level.blocks.ToArray(), level.exits.ToArray());
             session = new AdSession(variant.adFlowConfig);
             GameObject cameraObject = new GameObject("Board Camera", typeof(Camera));
             cameraObject.transform.SetParent(transform, false);
@@ -56,7 +56,6 @@ namespace Playable
             boardCamera.backgroundColor = variant.visualTheme.backgroundColor;
             boardCamera.nearClipPlane = 0.1f; boardCamera.farClipPlane = 30f;
             boardCamera.transform.localPosition = new Vector3((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f, -10f);
-            view = new BoardView(board, level, variant.visualTheme, transform);
             hud = new PlayableHud(uiFont, variant.adFlowConfig, transform);
             hud.Progress(0, board.BlockCount, 0);
             Input.simulateMouseWithTouches = true;
@@ -190,7 +189,6 @@ namespace Playable
         private void OnDestroy()
         {
             if (platform != null) { platform.PauseChanged -= SetPaused; platform.Dispose(); }
-            if (view != null) view.Dispose();
             if (hud != null) hud.Dispose();
         }
     }

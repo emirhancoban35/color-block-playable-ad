@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Playable.View
+namespace Playable.Editor
 {
-    // Geometry is generated once at startup; all faces share one white material.
+    // Geometry is generated in the Editor and saved as shared mesh assets.
     internal sealed class FlatMeshBuilder
     {
         private readonly List<Vector3> vertices = new List<Vector3>();
