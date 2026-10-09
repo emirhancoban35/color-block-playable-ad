@@ -87,6 +87,17 @@ namespace Playable.Editor
             Triangle(start, start + 1, start + 2);
         }
 
+        public void MovementArrow(Vector2 center, Vector2 direction, bool bothWays)
+        {
+            // Alpha zero keeps the symbol white when the shader applies the block tint.
+            Color white = new Color(1f, 1f, 1f, 0f);
+            bool horizontal = direction.x != 0f;
+            Rect(center.x - (horizontal ? 0.2f : 0.045f), center.y - (horizontal ? 0.045f : 0.2f),
+                horizontal ? 0.4f : 0.09f, horizontal ? 0.09f : 0.4f, -0.08f, white);
+            Arrow(center + direction * 0.2f, direction, white);
+            if (bothWays) Arrow(center - direction * 0.2f, -direction, white);
+        }
+
         private static Color Shade(Color color, float amount)
         {
             return new Color(Mathf.Min(1f, color.r * amount), Mathf.Min(1f, color.g * amount), Mathf.Min(1f, color.b * amount), 1f);

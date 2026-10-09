@@ -25,7 +25,9 @@ Shader "Playable/VertexColor"
                 o.color.rgb = GammaToLinearSpace(o.color.rgb);
                 #endif
                 o.color.rgb = lerp(o.color.rgb, fixed3(1,1,1), _Highlight);
-                o.color *= _Color;
+                // Alpha zero marks editor-baked symbols that keep their own color.
+                o.color.rgb *= lerp(fixed3(1,1,1), _Color.rgb, step(0.001, v.color.a));
+                o.color.a = _Color.a;
                 return o;
             }
             fixed4 frag(v2f i) : SV_Target { return i.color; }

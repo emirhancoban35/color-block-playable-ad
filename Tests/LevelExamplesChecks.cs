@@ -58,6 +58,7 @@ public static class LevelExamplesChecks
             session.Evaluate(board.ClearedCount, board.BlockCount);
             Require(session.Won, name + " did not reach its configured win condition");
             PlayableSceneBuilder.Prepare(variant);
+            VerifyDirectionSymbols(variant);
             Capture(name, variant);
             Debug.Log("LEVEL_EXAMPLE_PASSED: " + name + "; " + expected + " blocks solved; win condition and scene preparation passed.");
         }
@@ -111,6 +112,23 @@ public static class LevelExamplesChecks
         RenderTexture.active = null;
         UnityEngine.Object.DestroyImmediate(target);
         UnityEngine.Object.DestroyImmediate(image);
+    }
+
+    private static void VerifyDirectionSymbols(PlayableVariantConfig variant)
+    {
+        UnityEditor.SceneManagement.EditorSceneManager.OpenScene(PlayableSceneBuilder.ScenePath);
+        var view = UnityEngine.Object.FindFirstObjectByType<Playable.PlayableBootstrap>().BoardView;
+        foreach (var block in variant.levelConfig.blocks)
+        {
+            var transform = view.transform.Find(block.id);
+            Mesh mesh = transform.GetComponent<MeshFilter>().sharedMesh;
+            int symbols = 0;
+            foreach (Color32 color in mesh.colors32) if (color.a == 0) symbols++;
+            bool both = block.movementMode == Data.Core.MovementMode.HorizontalOnly || block.movementMode == Data.Core.MovementMode.VerticalOnly;
+            bool directional = block.movementMode != Data.Core.MovementMode.Free && block.movementMode != Data.Core.MovementMode.Locked;
+            Require(symbols == (directional ? (both ? 10 : 7) : 0), "Incorrect baked direction symbol: " + block.id);
+            Require(transform.childCount == 0, "Direction symbols must not add child objects");
+        }
     }
     private static void Require(bool condition, string message)
     { if (!condition) throw new InvalidOperationException(message); }

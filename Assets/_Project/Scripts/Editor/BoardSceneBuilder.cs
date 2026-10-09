@@ -211,6 +211,9 @@ namespace Playable.Editor
             foreach (Vector2Int cell in cells) key.Append(cell.x).Append(',').Append(cell.y).Append(';');
             key.Append(theme.cellGap.ToString("R", CultureInfo.InvariantCulture)).Append(';')
                 .Append(theme.cornerRadius.ToString("R", CultureInfo.InvariantCulture)).Append(';').Append(theme.showStuds);
+            var movement = variant.levelConfig.blocks[block].movementMode;
+            bool directional = movement != Data.Core.MovementMode.Free && movement != Data.Core.MovementMode.Locked;
+            if (directional) key.Append(";movement:2:").Append((int)movement);
             string path = MeshFolder + "/Shape_" + Hash128.Compute(key.ToString()) + ".asset";
             Mesh mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (mesh != null)
@@ -231,6 +234,30 @@ namespace Playable.Editor
                 float edge = 0.5f - theme.cellGap * 0.5f;
                 builder.Tile(cell, left ? -0.5f : -edge, right ? 0.5f : edge, bottom ? -0.5f : -edge, top ? 0.5f : edge,
                     theme.cornerRadius, Color.white, left, right, bottom, top, theme.showStuds);
+            }
+            if (directional)
+            {
+                Vector2 center = Vector2.zero;
+                foreach (Vector2Int cell in cells) center += (Vector2)cell;
+                center /= cells.Count;
+                Vector2 position = cells[0];
+                foreach (Vector2Int cell in cells)
+                    if (((Vector2)cell - center).sqrMagnitude < (position - center).sqrMagnitude) position = cell;
+                bool centerFits = true;
+                for (int y = 0; y < 2; y++)
+                    for (int x = 0; x < 2; x++)
+                        if (!cells.Contains(Vector2Int.RoundToInt(center + new Vector2(x * 0.72f - 0.36f, y * 0.72f - 0.36f)))) centerFits = false;
+                if (centerFits) position = center;
+                Vector2 direction;
+                switch (movement)
+                {
+                    case Data.Core.MovementMode.HorizontalOnly:
+                    case Data.Core.MovementMode.RightOnly: direction = Vector2.right; break;
+                    case Data.Core.MovementMode.LeftOnly: direction = Vector2.left; break;
+                    case Data.Core.MovementMode.DownOnly: direction = Vector2.down; break;
+                    default: direction = Vector2.up; break;
+                }
+                builder.MovementArrow(position, direction, movement == Data.Core.MovementMode.HorizontalOnly || movement == Data.Core.MovementMode.VerticalOnly);
             }
             mesh = builder.Build("Block shape");
             AssetDatabase.CreateAsset(mesh, path);
