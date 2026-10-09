@@ -73,7 +73,7 @@ The included variants are:
 | `Variant_Shapes` | L, T, zigzag, bar, and single-cell blocks around a central obstacle |
 | `Variant_OneWay` | Four one-way lanes, a locked block, and an eight-block clear target |
 
-The prepared scene uses `Variant_Stress`. One variant is prepared for each build; levels are not loaded in sequence at runtime.
+The prepared scene uses `Variant_Heart`. One variant is prepared for each build; levels are not loaded in sequence at runtime.
 
 ### Editor controls
 
