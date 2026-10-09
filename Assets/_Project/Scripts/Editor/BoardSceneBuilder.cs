@@ -31,7 +31,9 @@ namespace Playable.Editor
             root.transform.SetParent(bootstrap.transform, false);
 
             FlatMeshBuilder background = new FlatMeshBuilder();
-            background.Rect(-0.85f, -0.85f, board.Width + 0.7f, board.Height + 0.7f, 0.5f, theme.borderColor);
+            background.Tile(new Vector2((board.Width - 1) * 0.5f, (board.Height - 1) * 0.5f),
+                -board.Width * 0.5f - 0.35f, board.Width * 0.5f + 0.35f,
+                -board.Height * 0.5f - 0.35f, board.Height * 0.5f + 0.35f, 0.3f, theme.borderColor, depth: 0.5f);
             for (int y = 0; y < board.Height; y++)
                 for (int x = 0; x < board.Width; x++)
                 {
@@ -48,7 +50,7 @@ namespace Playable.Editor
                     : new Vector2(direction.x > 0 ? board.Width - 0.3f : -0.7f, gate.startIndex + (gate.length - 1) * 0.5f);
                 float halfWidth = horizontal ? gate.length * 0.5f - 0.03f : 0.17f;
                 float halfHeight = horizontal ? 0.17f : gate.length * 0.5f - 0.03f;
-                background.Tile(center, -halfWidth, halfWidth, -halfHeight, halfHeight, 0.06f, theme.GetColor(gate.colorId));
+                background.Tile(center, -halfWidth, halfWidth, -halfHeight, halfHeight, 0.12f, theme.GetColor(gate.colorId));
                 background.Arrow(center, direction, Color.white);
             }
             Mesh boardMesh = SaveBoardMesh(background.Build("Board and gates"));

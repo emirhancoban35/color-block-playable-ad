@@ -19,10 +19,11 @@ Shader "Playable/VertexColor"
             {
                 v2f o;
                 o.position = UnityObjectToClipPos(v.vertex);
-                o.color = v.color * _Color;
+                o.color = v.color;
                 #ifndef UNITY_COLORSPACE_GAMMA
                 o.color.rgb = GammaToLinearSpace(o.color.rgb);
                 #endif
+                o.color *= _Color;
                 return o;
             }
             fixed4 frag(v2f i) : SV_Target { return i.color; }

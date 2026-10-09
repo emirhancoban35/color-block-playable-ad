@@ -11,25 +11,25 @@ namespace Playable.Editor
         private readonly List<int> triangles = new List<int>();
 
         public void Tile(Vector2 center, float left, float right, float bottom, float top, float radius, Color color,
-            bool joinLeft = false, bool joinRight = false, bool joinBottom = false, bool joinTop = false, bool stud = false)
+            bool joinLeft = false, bool joinRight = false, bool joinBottom = false, bool joinTop = false, bool stud = false, float depth = 0f)
         {
             Vector2[] outer = Outline(left, right, bottom, top, radius, joinLeft, joinRight, joinBottom, joinTop);
             Vector2[] inner = Outline(left + (joinLeft ? 0f : 0.045f), right - (joinRight ? 0f : 0.045f),
                 bottom + (joinBottom ? 0f : 0.045f), top - (joinTop ? 0f : 0.045f), Mathf.Max(0f, radius - 0.035f),
                 joinLeft, joinRight, joinBottom, joinTop);
-            Fill(outer, center + new Vector2(0f, -0.045f), 0.025f, Shade(color, 0.47f), false);
-            Fill(inner, center, -0.01f, color, true);
+            Fill(outer, center + new Vector2(0f, -0.045f), depth + 0.025f, Shade(color, 0.47f), false);
+            Fill(inner, center, depth - 0.01f, color, true);
             for (int i = 0; i < outer.Length; i++)
             {
                 int next = (i + 1) % outer.Length;
                 Color edge = Shade(color, outer[i].y > 0f ? 1.18f : 0.65f);
-                Quad(center + outer[i], center + outer[next], center + inner[next], center + inner[i], 0f, edge);
+                Quad(center + outer[i], center + outer[next], center + inner[next], center + inner[i], depth, edge);
             }
             if (stud)
             {
-                Disc(center + new Vector2(0f, -0.027f), 0.255f, -0.025f, Shade(color, 0.6f));
-                Disc(center + new Vector2(0f, 0.018f), 0.24f, -0.03f, Shade(color, 1.16f));
-                Disc(center, 0.222f, -0.035f, color);
+                Disc(center + new Vector2(0f, -0.027f), 0.255f, -depth + 0.025f, Shade(color, 0.6f));
+                Disc(center + new Vector2(0f, 0.018f), 0.24f, depth - 0.03f, Shade(color, 1.16f));
+                Disc(center, 0.222f, depth - 0.035f, color);
             }
         }
 

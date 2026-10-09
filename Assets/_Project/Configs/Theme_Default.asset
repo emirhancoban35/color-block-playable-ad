@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3184bd8af92841de927edb71053b81a2, type: 3}
   m_Name: Theme_Default
   m_EditorClassIdentifier: 
-  backgroundColor: {r: 0.82, g: 0.85, b: 1, a: 1}
-  boardColor: {r: 0.35, g: 0.39, b: 0.53, a: 1}
-  borderColor: {r: 0.16, g: 0.18, b: 0.27, a: 1}
+  backgroundColor: {r: 0.83, g: 0.9, b: 1, a: 1}
+  boardColor: {r: 0.39, g: 0.46, b: 0.62, a: 1}
+  borderColor: {r: 0.19, g: 0.23, b: 0.34, a: 1}
   cellGap: 0.06
-  cornerRadius: 0.12
+  cornerRadius: 0.2
   showStuds: 1
   sharedMaterial: {fileID: 2100000, guid: 4cb74336b1645c799188f5987df357ec, type: 2}
   palette: []
