@@ -85,13 +85,12 @@ namespace Playable
             if (selected >= 0 && Input.GetMouseButton(0) && !session.Ended) Drag();
             if (selected >= 0 && Input.GetMouseButtonUp(0)) FinishGesture();
             float blend = Mathf.Min(1f, dt * variant.moveSpeed);
-            for (int b = 0; b < board.BlockCount; b++)
-                if (!board.IsCleared(b)) view.UpdateBlock(b, GridMath.GridToWorld(board.Origin(b), 1f, -0.1f), blend);
+            view.TickMotion(blend);
             if (escaping >= 0)
             {
                 escapeTime += dt;
                 float t = Mathf.Clamp01(escapeTime / variant.exitDuration);
-                view.UpdateBlock(escaping, Vector3.Lerp(escapeStart, escapeTarget, t), 1f);
+                view.PlaceBlock(escaping, Vector3.Lerp(escapeStart, escapeTarget, t));
                 if (t >= 1f) { view.HideBlock(escaping); escaping = -1; }
             }
             if (escaping < 0) session.Evaluate(board.ClearedCount, board.BlockCount);
@@ -142,8 +141,11 @@ namespace Playable
                     if (result == MoveResult.Blocked) break;
                 }
                 gestureMoved = true;
+                if (result == MoveResult.Moved)
+                    view.MoveTo(selected, GridMath.GridToWorld(board.Origin(selected), 1f, -0.1f));
                 if (result == MoveResult.Cleared)
                 {
+                    view.StopMoving(selected);
                     escaping = selected;
                     escapeTime = 0f;
                     escapeStart = GridMath.GridToWorld(board.Origin(selected), 1f, -0.15f);
