@@ -168,7 +168,12 @@ namespace Playable
 
         private void FinishGesture()
         {
-            if (gestureMoved) { session.RecordMove(); hud.Progress(board.ClearedCount, board.BlockCount, session.Moves); }
+            if (gestureMoved && !session.Ended)
+            {
+                session.RecordMove();
+                if (session.Moves == 1) platform.FirstMoveCompleted();
+                hud.Progress(board.ClearedCount, board.BlockCount, session.Moves);
+            }
             selected = -1;
             gestureMoved = false;
         }

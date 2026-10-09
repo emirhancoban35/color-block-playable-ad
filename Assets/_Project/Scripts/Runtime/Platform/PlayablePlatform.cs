@@ -35,6 +35,12 @@ namespace Playable.Platform
             Luna.Unity.Analytics.LogEvent(Luna.Unity.Analytics.EventType.TutorialStarted);
 #endif
         }
+        public void FirstMoveCompleted()
+        {
+#if PLAYWORKS_SDK
+            Luna.Unity.Analytics.LogEvent("FirstMoveCompleted", 1);
+#endif
+        }
         public void GameEnded(bool won, bool endCardShown)
         {
             if (ended) return;
