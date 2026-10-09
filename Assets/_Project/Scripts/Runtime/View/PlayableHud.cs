@@ -38,6 +38,7 @@ namespace Playable.View
         public void Initialize(AdFlowConfig flow)
         {
             hook.text = flow.hookText;
+            progress.gameObject.SetActive(flow.showProgress);
             visualTime = 0f;
             resultTime = -1f;
             tutorial.text = flow.tutorialText;
@@ -57,7 +58,7 @@ namespace Playable.View
             safeRoot.anchorMax = new Vector2(safe.xMax / Screen.width, safe.yMax / Screen.height);
             safeRoot.offsetMin = safeRoot.offsetMax = Vector2.zero;
         }
-        public void Progress(int cleared, int total, int moves) { progress.text = cleared + " / " + total + " CLEARED   ·   " + moves + " MOVES"; }
+        public void Progress(int cleared, int total, int moves) { if (!progress.gameObject.activeSelf) return; progress.text = cleared + " / " + total + " CLEARED   ·   " + moves + " MOVES"; }
         public void Tutorial(bool visible) { if (instruction.gameObject.activeSelf != visible) instruction.gameObject.SetActive(visible); }
         public void Cta(bool visible) { if (cta.gameObject.activeSelf != visible) cta.gameObject.SetActive(visible); }
         public void TickVisuals(float dt, bool idle)

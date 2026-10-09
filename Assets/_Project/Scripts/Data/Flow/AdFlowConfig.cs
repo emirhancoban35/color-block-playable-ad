@@ -10,6 +10,7 @@ namespace Data.Flow
         public EndCondition endCondition = EndCondition.OnAllBlocksCleared;
         public CtaMode ctaMode = CtaMode.EndCardOnly;
         public bool showEndCardOnWin = true;
+        public bool showProgress = true;
         
         [Header("Condition Limits")]
         public int moveLimit = 10;
@@ -17,6 +18,10 @@ namespace Data.Flow
 
         [Header("Timings & Delays")]
         public float timer = 15f;
+#if PLAYWORKS_SDK
+        [LunaPlaygroundField("Active interaction seconds", 0, "Flow")]
+#endif
+        [Min(0f)] public float storeAfterInteraction;
         public float endCardDelay = 1f;
         public float ctaDelay = 2f;
         public float tutorialDelay = 1f;

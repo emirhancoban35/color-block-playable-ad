@@ -78,7 +78,7 @@ namespace Playable
             {
                 StopHint();
                 idleTime = 0f;
-                if (hud.HitCta(Input.mousePosition)) { platform.Install(); return; }
+                if (session.StoreReady || hud.HitCta(Input.mousePosition)) { platform.Install(); return; }
                 if (!session.Ended && escaping < 0 && !view.BurstPlaying)
                 {
                     Vector3 world = PointerWorld();
@@ -93,7 +93,11 @@ namespace Playable
                     }
                 }
             }
-            if (selected >= 0 && Input.GetMouseButton(0) && !session.Ended) Drag();
+            if (selected >= 0 && Input.GetMouseButton(0) && !session.Ended)
+            {
+                session.TickInteraction(dt);
+                Drag();
+            }
             if (selected >= 0 && Input.GetMouseButtonUp(0)) FinishGesture();
             float blend = Mathf.Min(1f, dt * variant.moveSpeed);
             view.TickMotion(blend);

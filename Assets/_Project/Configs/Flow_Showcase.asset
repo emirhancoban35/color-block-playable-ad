@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6528337b7ed74c34b92f8a39f804843, type: 3}
   m_Name: Flow_Showcase
   m_EditorClassIdentifier: 
-  endCondition: 1
+  endCondition: 4
   ctaMode: 1
-  showEndCardOnWin: 1
+  showEndCardOnWin: 0
+  showProgress: 0
   moveLimit: 10
   targetBlocksToClear: 8
   timer: 20
+  storeAfterInteraction: 10
   endCardDelay: 0.45
   ctaDelay: 2
   tutorialDelay: 0.4
   showTutorial: 1
-  hookText: Can you free 8 blocks?
+  hookText: Can you solve this?
   tutorialText: Drag blocks to matching exits!
   ctaText: PLAY NOW
   endCardTitle: YOU GOT IT!

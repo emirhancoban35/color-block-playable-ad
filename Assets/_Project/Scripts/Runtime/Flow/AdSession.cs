@@ -8,11 +8,18 @@ namespace Playable.Flow
         private readonly AdFlowConfig config;
         public float Elapsed { get; private set; }
         public int Moves { get; private set; }
+        public float InteractionTime { get; private set; }
+        public bool StoreReady { get { return config.storeAfterInteraction > 0f && InteractionTime >= config.storeAfterInteraction; } }
         public bool Ended { get; private set; }
         public bool Won { get; private set; }
 
         public AdSession(AdFlowConfig config) { this.config = config; }
         public void Tick(float delta) { if (!Ended) Elapsed += delta; }
+        public void TickInteraction(float delta)
+        {
+            if (!Ended && config.storeAfterInteraction > 0f && !StoreReady)
+                InteractionTime = UnityEngine.Mathf.Min(config.storeAfterInteraction, InteractionTime + delta);
+        }
         public void RecordMove() { if (!Ended) Moves++; }
         public void Complete(bool won) { if (Ended) return; Ended = true; Won = won; }
 
