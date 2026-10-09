@@ -11,7 +11,7 @@ namespace Playable.Editor
     public static class PlayableSceneBuilder
     {
         public const string ScenePath = "Assets/_Project/Scenes/Playable_2D.unity";
-        public const string DefaultVariantPath = "Assets/_Project/Configs/Variant_Showcase.asset";
+        public const string DefaultVariantPath = "Assets/_Project/Configs/Variant_Stress.asset";
 
         public static void Prepare(PlayableVariantConfig variant)
         {
@@ -36,6 +36,11 @@ namespace Playable.Editor
                 SceneManager.MoveGameObjectToScene(root, scene);
                 bootstrap = root.AddComponent<PlayableBootstrap>();
             }
+            Scene previousActiveScene = SceneManager.GetActiveScene();
+            SceneManager.SetActiveScene(scene);
+            RenderSettings.skybox = null;
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
+            RenderSettings.defaultReflectionMode = UnityEngine.Rendering.DefaultReflectionMode.Custom;
             Undo.RecordObject(bootstrap, "Select playable variant");
             var board = BoardSceneBuilder.Build(variant, bootstrap);
             if (bootstrap.BoardCamera != null) Undo.DestroyObjectImmediate(bootstrap.BoardCamera.gameObject);
@@ -59,6 +64,7 @@ namespace Playable.Editor
             EditorUtility.SetDirty(bootstrap);
             Directory.CreateDirectory("Assets/_Project/Scenes");
             EditorSceneManager.SaveScene(scene, ScenePath);
+            if (previousActiveScene.IsValid() && previousActiveScene.isLoaded) SceneManager.SetActiveScene(previousActiveScene);
             if (!alreadyOpen && SceneManager.sceneCount > 1) EditorSceneManager.CloseScene(scene, true);
             EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
             AssetDatabase.SaveAssets();

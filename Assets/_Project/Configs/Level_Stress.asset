@@ -1,0 +1,779 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c329dc789c1458ba211dbd81adc9757, type: 3}
+  m_Name: Level_Stress
+  m_EditorClassIdentifier: 
+  width: 16
+  height: 20
+  cells: []
+  blocks:
+  - id: red
+    colorId: 0
+    origin: {x: 0, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: yellow
+    colorId: 2
+    origin: {x: 2, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: cyan
+    colorId: 6
+    origin: {x: 4, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: green
+    colorId: 3
+    origin: {x: 6, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: blue
+    colorId: 1
+    origin: {x: 8, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: purple
+    colorId: 4
+    origin: {x: 10, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: orange
+    colorId: 5
+    origin: {x: 12, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: pink
+    colorId: 7
+    origin: {x: 14, y: 0}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_0
+    colorId: 2
+    origin: {x: 0, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_1
+    colorId: 6
+    origin: {x: 2, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_2
+    colorId: 3
+    origin: {x: 4, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_3
+    colorId: 1
+    origin: {x: 6, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_4
+    colorId: 4
+    origin: {x: 8, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_5
+    colorId: 5
+    origin: {x: 10, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_6
+    colorId: 7
+    origin: {x: 12, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row1_7
+    colorId: 0
+    origin: {x: 14, y: 2}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_0
+    colorId: 6
+    origin: {x: 0, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_1
+    colorId: 3
+    origin: {x: 2, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_2
+    colorId: 1
+    origin: {x: 4, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_3
+    colorId: 4
+    origin: {x: 6, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_4
+    colorId: 5
+    origin: {x: 8, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_5
+    colorId: 7
+    origin: {x: 10, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_6
+    colorId: 0
+    origin: {x: 12, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row2_7
+    colorId: 2
+    origin: {x: 14, y: 4}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_0
+    colorId: 3
+    origin: {x: 0, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_1
+    colorId: 1
+    origin: {x: 2, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_2
+    colorId: 4
+    origin: {x: 4, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_3
+    colorId: 5
+    origin: {x: 6, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_4
+    colorId: 7
+    origin: {x: 8, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_5
+    colorId: 0
+    origin: {x: 10, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_6
+    colorId: 2
+    origin: {x: 12, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row3_7
+    colorId: 6
+    origin: {x: 14, y: 6}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_0
+    colorId: 1
+    origin: {x: 0, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_1
+    colorId: 4
+    origin: {x: 2, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_2
+    colorId: 5
+    origin: {x: 4, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_3
+    colorId: 7
+    origin: {x: 6, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_4
+    colorId: 0
+    origin: {x: 8, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_5
+    colorId: 2
+    origin: {x: 10, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_6
+    colorId: 6
+    origin: {x: 12, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row4_7
+    colorId: 3
+    origin: {x: 14, y: 8}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_0
+    colorId: 4
+    origin: {x: 0, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_1
+    colorId: 5
+    origin: {x: 2, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_2
+    colorId: 7
+    origin: {x: 4, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_3
+    colorId: 0
+    origin: {x: 6, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_4
+    colorId: 2
+    origin: {x: 8, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_5
+    colorId: 6
+    origin: {x: 10, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_6
+    colorId: 3
+    origin: {x: 12, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row5_7
+    colorId: 1
+    origin: {x: 14, y: 10}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_0
+    colorId: 5
+    origin: {x: 0, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_1
+    colorId: 7
+    origin: {x: 2, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_2
+    colorId: 0
+    origin: {x: 4, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_3
+    colorId: 2
+    origin: {x: 6, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_4
+    colorId: 6
+    origin: {x: 8, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_5
+    colorId: 3
+    origin: {x: 10, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_6
+    colorId: 1
+    origin: {x: 12, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row6_7
+    colorId: 4
+    origin: {x: 14, y: 12}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_0
+    colorId: 7
+    origin: {x: 0, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_1
+    colorId: 0
+    origin: {x: 2, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_2
+    colorId: 2
+    origin: {x: 4, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_3
+    colorId: 6
+    origin: {x: 6, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_4
+    colorId: 3
+    origin: {x: 8, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_5
+    colorId: 1
+    origin: {x: 10, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_6
+    colorId: 4
+    origin: {x: 12, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row7_7
+    colorId: 5
+    origin: {x: 14, y: 14}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_0
+    colorId: 0
+    origin: {x: 0, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_1
+    colorId: 2
+    origin: {x: 2, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_2
+    colorId: 6
+    origin: {x: 4, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_3
+    colorId: 3
+    origin: {x: 6, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_4
+    colorId: 1
+    origin: {x: 8, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_5
+    colorId: 4
+    origin: {x: 10, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_6
+    colorId: 5
+    origin: {x: 12, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row8_7
+    colorId: 7
+    origin: {x: 14, y: 16}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_0
+    colorId: 2
+    origin: {x: 0, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_1
+    colorId: 6
+    origin: {x: 2, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_2
+    colorId: 3
+    origin: {x: 4, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_3
+    colorId: 1
+    origin: {x: 6, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_4
+    colorId: 4
+    origin: {x: 8, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_5
+    colorId: 5
+    origin: {x: 10, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_6
+    colorId: 7
+    origin: {x: 12, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  - id: row9_7
+    colorId: 0
+    origin: {x: 14, y: 18}
+    localCells:
+    - {x: 0, y: 0}
+    - {x: 1, y: 0}
+    - {x: 0, y: 1}
+    - {x: 1, y: 1}
+    movementMode: 0
+  exits:
+  - id: exit_red
+    colorId: 0
+    side: 1
+    startIndex: 0
+    length: 2
+  - id: exit_yellow
+    colorId: 2
+    side: 1
+    startIndex: 2
+    length: 2
+  - id: exit_cyan
+    colorId: 6
+    side: 1
+    startIndex: 4
+    length: 2
+  - id: exit_green
+    colorId: 3
+    side: 1
+    startIndex: 6
+    length: 2
+  - id: exit_blue
+    colorId: 1
+    side: 1
+    startIndex: 8
+    length: 2
+  - id: exit_purple
+    colorId: 4
+    side: 1
+    startIndex: 10
+    length: 2
+  - id: exit_orange
+    colorId: 5
+    side: 1
+    startIndex: 12
+    length: 2
+  - id: exit_pink
+    colorId: 7
+    side: 1
+    startIndex: 14
+    length: 2

@@ -13,6 +13,7 @@ namespace Data.Level
         public List<Vector2Int> localCells = new List<Vector2Int>();
         public MovementMode movementMode = MovementMode.Free;
 
+#if UNITY_EDITOR
         public void NormalizeLocalCells()
         {
             if (localCells == null || localCells.Count == 0) return;
@@ -33,5 +34,6 @@ namespace Data.Level
                 localCells[i] = new Vector2Int(localCells[i].x - minX, localCells[i].y - minY);
             }
         }
+#endif
     }
 }

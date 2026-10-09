@@ -44,7 +44,6 @@ namespace Playable.Editor
                         Wall(background, cell, 0.96f, 0.96f, borderColor);
                     else
                     {
-                        background.RoundedRect(cell, 0.96f, 0.96f, 0.08f, 0f, boardColor * 0.8f);
                         background.RoundedRect((Vector2)cell + new Vector2(0f, -0.012f),
                             0.94f, 0.93f, 0.07f, -0.01f, boardColor);
                     }

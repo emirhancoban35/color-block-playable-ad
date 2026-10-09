@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEngine;
 using Data.Level;
@@ -100,3 +101,4 @@ namespace Utilities
         }
     }
 }
+#endif
