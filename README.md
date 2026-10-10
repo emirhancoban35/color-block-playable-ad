@@ -5,7 +5,7 @@ A Color Block Jam-inspired playable ad built with Unity and Playworks. Levels, v
 I built this as a portfolio project, with most of the scene setup done in the editor. The runtime handles input, grid rules, animation, and the ad session. Blocks, meshes, UI, and effects are already in the scene when it starts.
 
 <p align="center">
-  <img src="docs/images/level-heart.png" width="300" alt="Heart puzzle with large white horizontal and vertical movement arrows">
+  <img src="docs/images/heart-gameplay.gif" width="300" alt="Heart puzzle gameplay with direction arrows, selection highlights, smooth block movement, and exit fragments">
 </p>
 
 | | |
